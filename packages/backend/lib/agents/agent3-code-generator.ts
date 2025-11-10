@@ -8,6 +8,9 @@ import { generateCode, generateRelatedFiles, type CodeGenerationRequest } from '
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 
+// Create logger instance
+const logger = createLogger('agent3-code-generator')
+
 export interface Agent3Request {
   projectId: string
   projectPath: string

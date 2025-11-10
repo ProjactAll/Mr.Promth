@@ -4,7 +4,13 @@
  */
 
 import { createLogger } from '../utils/logger'
+
+// Create logger instance
+const logger = createLogger('$(basename "$file" .ts)')
 import { createClient } from '@supabase/supabase-js'
+
+// Create logger instance
+const logger = createLogger('$(basename "$file" .ts)')
 
 export interface Agent7Request {
   projectId: string

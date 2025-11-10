@@ -123,38 +123,11 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
     sql += `  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n`
     
     // Add custom columns if available
-    let validColumnsAdded = false
-    if (typeof table === 'object' && table.columns && Array.isArray(table.columns)) {
+    if (typeof table === 'object' && table.columns) {
       for (const column of table.columns) {
-        // Skip if column name or type is missing
-        if (!column.name || !column.type || typeof column.name !== 'string' || typeof column.type !== 'string') {
-          continue
-        }
         const nullable = column.nullable ? '' : ' NOT NULL'
         const defaultValue = column.default ? ` DEFAULT ${column.default}` : ''
         sql += `  ${column.name} ${column.type}${nullable}${defaultValue},\n`
-        validColumnsAdded = true
-      }
-    }
-    
-    // If no valid columns were added, use fallback
-    if (!validColumnsAdded) {
-      logger.info(`Using fallback columns for table: ${tableName}`)
-      if (tableName === 'users') {
-        sql += `  email TEXT UNIQUE NOT NULL,\n`
-        sql += `  name TEXT,\n`
-        sql += `  avatar_url TEXT,\n`
-      } else if (tableName === 'todos') {
-        sql += `  user_id UUID REFERENCES users(id) ON DELETE CASCADE,\n`
-        sql += `  title TEXT NOT NULL,\n`
-        sql += `  description TEXT,\n`
-        sql += `  completed BOOLEAN DEFAULT FALSE,\n`
-        sql += `  priority TEXT DEFAULT 'medium',\n`
-        sql += `  due_date TIMESTAMP WITH TIME ZONE,\n`
-      } else {
-        // Generic columns for unknown tables
-        sql += `  name TEXT NOT NULL,\n`
-        sql += `  description TEXT,\n`
       }
     }
     
@@ -373,10 +346,9 @@ async function generateValidationSchemas(architecture: Agent2Output) {
     // Add custom columns if available
     if (typeof table === 'object' && table.columns) {
       for (const column of table.columns) {
-        const columnType = column.type || 'string'
         schema[column.name] = {
-          type: columnType.toLowerCase().includes('int') ? 'number' : 
-                columnType.toLowerCase().includes('bool') ? 'boolean' : 'string',
+          type: column.type.includes('int') ? 'number' : 
+                column.type.includes('bool') ? 'boolean' : 'string',
           required: !column.nullable
         }
       }

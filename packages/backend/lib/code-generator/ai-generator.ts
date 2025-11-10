@@ -3,7 +3,7 @@
  * Uses OpenAI GPT-4 to generate code based on specifications
  */
 
-import { getNextModel, vanchinChatCompletion } from '../ai/vanchin-client'
+import { getVanchinClient, vanchinChatCompletion } from '../ai/vanchin-client'
 
 // Use Vanchin AI with load balancing
 // Automatically rotates between 19 models with 20M free tokens total
@@ -42,10 +42,10 @@ export async function generateCode(
   
   try {
   // Get next available model (load balancing)
-  const { client, endpoint } = getNextModel()
+  const { client, modelId } = getVanchinClient()
   
   const completion = await client.chat.completions.create({
-    model: endpoint,
+    model: modelId,
       messages: [
         {
           role: 'system',

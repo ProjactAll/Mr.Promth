@@ -4,9 +4,21 @@
  */
 
 import { createLogger } from '../utils/logger'
+
+// Create logger instance
+const logger = createLogger('$(basename "$file" .ts)')
 import { generateCode, type CodeGenerationRequest } from '../code-generator/ai-generator'
+
+// Create logger instance
+const logger = createLogger('$(basename "$file" .ts)')
 import { writeFile, mkdir } from 'fs/promises'
+
+// Create logger instance
+const logger = createLogger('$(basename "$file" .ts)')
 import { join } from 'path'
+
+// Create logger instance
+const logger = createLogger('$(basename "$file" .ts)')
 
 export interface Agent4Request {
   projectId: string

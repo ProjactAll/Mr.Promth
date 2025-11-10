@@ -119,11 +119,16 @@ export function parseAgentResponse<T>(response: string): T {
   }
 
   const fencedMatch = trimmed.match(JSON_FENCE_REGEX);
-  const jsonCandidate = fencedMatch ? fencedMatch[1] : trimmed;
+  let jsonCandidate = fencedMatch ? fencedMatch[1] : trimmed;
+  
+  // Sanitize JSON: remove control characters
+  jsonCandidate = jsonCandidate.replace(/[\x00-\x1F\x7F]/g, '');
 
   try {
     return JSON.parse(jsonCandidate) as T;
   } catch (error) {
+    // Log the problematic JSON for debugging
+    console.error('Failed to parse JSON:', jsonCandidate.substring(0, 500));
     throw new Error(`Failed to parse agent response as JSON: ${(error as Error).message}`);
   }
 }
