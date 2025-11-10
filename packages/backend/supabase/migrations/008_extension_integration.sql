@@ -111,8 +111,8 @@ CREATE POLICY "Users can create dom snapshots for own screenshots"
 CREATE TABLE IF NOT EXISTS public.analysis_results (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   screenshot_id UUID REFERENCES public.screenshots(id) ON DELETE CASCADE NOT NULL,
-  agent_type TEXT NOT NULL, -- 'planning', 'design', 'frontend', etc.
-  analysis_data JSONB NOT NULL, -- ผลการวิเคราะห์
+  analysis_type TEXT NOT NULL, -- 'quick' or 'full'
+  results JSONB NOT NULL, -- ผลการวิเคราะห์จาก AI agents
   suggestions JSONB, -- คำแนะนำจาก AI
   confidence_score DECIMAL(3,2), -- คะแนนความมั่นใจ 0.00-1.00
   processing_time INTEGER, -- เวลาที่ใช้ในการวิเคราะห์ (ms)

@@ -18,6 +18,16 @@ export interface VanchinModel {
 }
 
 /**
+ * Vanchin Client Instance
+ * Includes both OpenAI client and model ID
+ */
+export interface VanchinClientInstance {
+  client: OpenAI
+  modelId: string
+  modelName: string
+}
+
+/**
  * Load Vanchin models from environment variables
  */
 function loadVanchinModels(): Record<string, VanchinModel> {
@@ -55,7 +65,7 @@ export class VanchinClient {
   private baseUrl: string
 
   constructor() {
-    // Vanchin uses a single endpoint URL, endpoint_id goes in the "model" field
+    // Vanchin base URL (without /chat/completions)
     this.baseUrl = process.env.VANCHIN_BASE_URL || 'https://vanchin.streamlake.ai/api/gateway/v1/endpoints'
     this.models = Object.values(VANCHIN_MODELS)
     
@@ -83,34 +93,37 @@ export class VanchinClient {
   /**
    * Create OpenAI-compatible client for a specific model
    * 
-   * IMPORTANT: Vanchin API format:
-   * - URL: https://vanchin.streamlake.ai/api/gateway/v1/endpoints/chat/completions
-   * - Authorization: Bearer {API_KEY}
-   * - model field: {ENDPOINT_ID} (e.g., "ep-xxx-123456789")
+   * IMPORTANT: Vanchin API format (based on user's example):
+   * - base_url: https://vanchin.streamlake.ai/api/gateway/v1/endpoints
+   * - api_key: from environment variable
+   * - model: endpoint_id (e.g., "ep-lvu0su-1762738948457077875")
    */
-  private createClient(model: VanchinModel): OpenAI {
-    return new OpenAI({
+  private createClientInstance(model: VanchinModel): VanchinClientInstance {
+    const client = new OpenAI({
       apiKey: model.apiKey,
       baseURL: this.baseUrl,
-      defaultQuery: {
-        // Vanchin uses endpoint_id as the "model" parameter
-        model: model.endpointId
-      }
     })
+
+    return {
+      client,
+      modelId: model.endpointId,
+      modelName: model.name,
+    }
   }
 
   /**
    * Get OpenAI-compatible client with automatic load balancing
+   * Returns both client and model ID (you must pass modelId to chat.completions.create)
    */
-  getClient(): OpenAI {
+  getClient(): VanchinClientInstance {
     const model = this.getNextModel()
-    return this.createClient(model)
+    return this.createClientInstance(model)
   }
 
   /**
    * Get client for a specific model by index (1-39)
    */
-  getClientByIndex(index: number): OpenAI {
+  getClientByIndex(index: number): VanchinClientInstance {
     const modelKey = `model_${index}`
     const model = VANCHIN_MODELS[modelKey]
     
@@ -118,48 +131,38 @@ export class VanchinClient {
       throw new Error(`Model ${index} not found. Available models: ${Object.keys(VANCHIN_MODELS).join(', ')}`)
     }
     
-    return this.createClient(model)
+    return this.createClientInstance(model)
   }
 
   /**
-   * Direct chat completion (bypasses OpenAI client for full control)
+   * Chat completion with automatic load balancing
+   * This is the recommended way to use Vanchin AI
    */
   async chatCompletion(
     messages: Array<{ role: string; content: string }>,
     options: {
-      modelIndex?: number;
-      temperature?: number;
-      max_tokens?: number;
+      modelIndex?: number
+      temperature?: number
+      max_tokens?: number
     } = {}
-  ): Promise<any> {
-    const model = options.modelIndex 
-      ? VANCHIN_MODELS[`model_${options.modelIndex}`]
-      : this.getNextModel()
+  ): Promise<string> {
+    const instance = options.modelIndex 
+      ? this.getClientByIndex(options.modelIndex)
+      : this.getClient()
 
-    if (!model) {
-      throw new Error(`Model not found`)
-    }
-
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${model.apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: model.endpointId, // endpoint_id goes here
+    try {
+      const response = await instance.client.chat.completions.create({
+        model: instance.modelId, // IMPORTANT: endpoint_id goes here
         messages,
         temperature: options.temperature ?? 0.7,
         max_tokens: options.max_tokens,
-      }),
-    })
+      })
 
-    if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Vanchin API error: ${error}`)
+      return response.choices[0]?.message?.content || ''
+    } catch (error) {
+      console.error(`Vanchin API error (${instance.modelName}):`, error)
+      throw error
     }
-
-    return response.json()
   }
 
   /**
@@ -184,28 +187,44 @@ export const vanchinClient = new VanchinClient()
 
 /**
  * Get OpenAI-compatible client (with load balancing)
+ * 
+ * Usage:
+ * ```ts
+ * const { client, modelId } = getVanchinClient()
+ * const response = await client.chat.completions.create({
+ *   model: modelId,
+ *   messages: [{ role: 'user', content: 'Hello' }]
+ * })
+ * ```
  */
-export function getVanchinClient(): OpenAI {
+export function getVanchinClient(): VanchinClientInstance {
   return vanchinClient.getClient()
 }
 
 /**
  * Get client for specific model index
  */
-export function getVanchinClientByIndex(index: number): OpenAI {
+export function getVanchinClientByIndex(index: number): VanchinClientInstance {
   return vanchinClient.getClientByIndex(index)
 }
 
 /**
  * Direct chat completion (recommended for Vanchin)
+ * 
+ * Usage:
+ * ```ts
+ * const response = await vanchinChatCompletion([
+ *   { role: 'user', content: 'Hello' }
+ * ])
+ * ```
  */
 export async function vanchinChatCompletion(
   messages: Array<{ role: string; content: string }>,
   options?: {
-    modelIndex?: number;
-    temperature?: number;
-    max_tokens?: number;
+    modelIndex?: number
+    temperature?: number
+    max_tokens?: number
   }
-): Promise<any> {
+): Promise<string> {
   return vanchinClient.chatCompletion(messages, options)
 }

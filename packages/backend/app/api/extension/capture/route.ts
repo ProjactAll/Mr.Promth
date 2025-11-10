@@ -1,4 +1,12 @@
-import { createClient } from '@/lib/database'
+import {
+  createServiceClient,
+  getApiKeyByKey,
+  createExtensionSession,
+  createScreenshot,
+  createDomSnapshot,
+  getUserScreenshots,
+  getSessionScreenshots,
+} from '@/lib/database'
 import { NextResponse } from 'next/server'
 
 /**
@@ -38,17 +46,11 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create Supabase client
-    const supabase = createClient()
-
     // Get user ID from API key
-    const { data: keyData, error: keyError } = await supabase
-      .from('api_keys')
-      .select('user_id')
-      .eq('key', apiKey)
-      .single()
-
-    if (keyError || !keyData) {
+    let keyData = null
+    try {
+      keyData = await getApiKeyByKey(apiKey)
+    } catch (error) {
       return NextResponse.json(
         { error: 'Invalid API key' },
         { status: 401 }
@@ -68,33 +70,43 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate screenshot is a data URL
+    if (!screenshot.startsWith('data:image/')) {
+      return NextResponse.json(
+        { error: 'Screenshot must be a data URL' },
+        { status: 400 }
+      )
+    }
+
     // Create or get session
     let sessionId = session_id
 
     if (!sessionId) {
       // Create new session
-      const { data: sessionData, error: sessionError } = await supabase
-        .from('extension_sessions')
-        .insert({
-          user_id: userId,
-          browser_info: metadata?.browser || {},
+      try {
+        const sessionData = await createExtensionSession(userId, {
+          browser: metadata?.browser || 'Unknown',
+          initial_url: url,
         })
-        .select()
-        .single()
-
-      if (sessionError) {
-        console.error('Error creating session:', sessionError)
+        sessionId = sessionData.id
+      } catch (error) {
+        console.error('Error creating session:', error)
         return NextResponse.json(
           { error: 'Failed to create session' },
           { status: 500 }
         )
       }
-
-      sessionId = sessionData.id
     }
 
     // Convert data URL to blob
     const base64Data = screenshot.split(',')[1]
+    if (!base64Data) {
+      return NextResponse.json(
+        { error: 'Invalid screenshot data' },
+        { status: 400 }
+      )
+    }
+
     const buffer = Buffer.from(base64Data, 'base64')
 
     // Generate storage path
@@ -102,6 +114,8 @@ export async function POST(request: Request) {
     const storagePath = `${userId}/${sessionId}/${timestamp}.png`
 
     // Upload to Supabase Storage
+    const supabase = createServiceClient()
+    
     const { data: uploadData, error: uploadError } = await supabase
       .storage
       .from('screenshots')
@@ -118,29 +132,29 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get public URL
+    // Get public URL (or signed URL for private bucket)
     const { data: urlData } = supabase
       .storage
       .from('screenshots')
       .getPublicUrl(storagePath)
 
     // Save screenshot metadata to database
-    const { data: screenshotData, error: screenshotError } = await supabase
-      .from('screenshots')
-      .insert({
-        user_id: userId,
-        session_id: sessionId,
-        url: url,
-        storage_path: storagePath,
-        width: metadata?.width,
-        height: metadata?.height,
-        metadata: metadata || {},
-      })
-      .select()
-      .single()
-
-    if (screenshotError) {
-      console.error('Error saving screenshot metadata:', screenshotError)
+    let screenshotData = null
+    try {
+      screenshotData = await createScreenshot(
+        userId,
+        sessionId,
+        url,
+        storagePath, // Use storage path, not URL
+        {
+          width: metadata?.width,
+          height: metadata?.height,
+          browser: metadata?.browser,
+          ...metadata,
+        }
+      )
+    } catch (error) {
+      console.error('Error saving screenshot metadata:', error)
       return NextResponse.json(
         { error: 'Failed to save screenshot metadata' },
         { status: 500 }
@@ -151,17 +165,15 @@ export async function POST(request: Request) {
 
     // Save DOM snapshot if provided
     if (dom || clickable) {
-      const { error: domError } = await supabase
-        .from('dom_snapshots')
-        .insert({
-          screenshot_id: screenshotId,
-          dom_structure: dom || {},
-          clickable_elements: clickable || [],
-          form_fields: metadata?.forms || [],
-        })
-
-      if (domError) {
-        console.error('Error saving DOM snapshot:', domError)
+      try {
+        await createDomSnapshot(
+          screenshotId,
+          dom || {},
+          clickable || [],
+          metadata?.forms || []
+        )
+      } catch (error) {
+        console.error('Error saving DOM snapshot:', error)
         // Don't fail the request, just log the error
       }
     }
@@ -213,17 +225,11 @@ export async function GET(request: Request) {
       )
     }
 
-    // Create Supabase client
-    const supabase = createClient()
-
     // Get user ID from API key
-    const { data: keyData, error: keyError } = await supabase
-      .from('api_keys')
-      .select('user_id')
-      .eq('key', apiKey)
-      .single()
-
-    if (keyError || !keyData) {
+    let keyData = null
+    try {
+      keyData = await getApiKeyByKey(apiKey)
+    } catch (error) {
       return NextResponse.json(
         { error: 'Invalid API key' },
         { status: 401 }
@@ -235,25 +241,17 @@ export async function GET(request: Request) {
     // Parse query parameters
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit') || '10')
-    const offset = parseInt(searchParams.get('offset') || '0')
     const sessionId = searchParams.get('session_id')
 
-    // Build query
-    let query = supabase
-      .from('screenshots')
-      .select('*, dom_snapshots(*)', { count: 'exact' })
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
-
-    if (sessionId) {
-      query = query.eq('session_id', sessionId)
-    }
-
-    // Execute query
-    const { data, error, count } = await query
-
-    if (error) {
+    // Get screenshots
+    let screenshots = []
+    try {
+      if (sessionId) {
+        screenshots = await getSessionScreenshots(sessionId)
+      } else {
+        screenshots = await getUserScreenshots(userId, limit)
+      }
+    } catch (error) {
       console.error('Error fetching screenshots:', error)
       return NextResponse.json(
         { error: 'Failed to fetch screenshots' },
@@ -262,8 +260,8 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json({
-      screenshots: data || [],
-      total: count || 0,
+      screenshots: screenshots || [],
+      total: screenshots?.length || 0,
     })
 
   } catch (error) {

@@ -4,7 +4,20 @@
  * This module handles all communication with the backend API
  */
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
+// API Configuration
+// TODO: Change this to your production URL when deploying
+const API_BASE_URL = 'https://mr-promth-production.vercel.app' // Production
+const API_BASE_URL_DEV = 'http://localhost:3000' // Development
+
+// Use production URL by default, can be overridden in settings
+function getApiBaseUrl(): string {
+  // Check if we're in development mode
+  if (typeof chrome !== 'undefined' && chrome.storage) {
+    // Will be loaded from storage in production
+    return API_BASE_URL
+  }
+  return API_BASE_URL_DEV
+}
 
 export interface AuthResponse {
   api_key: string
@@ -13,6 +26,7 @@ export interface AuthResponse {
     id: string
     email: string
     display_name: string
+    avatar_url?: string
   }
 }
 
@@ -41,8 +55,15 @@ export class ApiClient {
   private apiKey: string | null = null
   private baseUrl: string
 
-  constructor(baseUrl: string = API_BASE_URL) {
-    this.baseUrl = baseUrl
+  constructor(baseUrl?: string) {
+    this.baseUrl = baseUrl || getApiBaseUrl()
+  }
+
+  /**
+   * Set API base URL
+   */
+  setBaseUrl(url: string) {
+    this.baseUrl = url
   }
 
   /**
@@ -56,10 +77,14 @@ export class ApiClient {
    * Get API key from storage
    */
   async loadApiKey(): Promise<string | null> {
-    const result = await chrome.storage.local.get(['apiKey'])
-    if (result.apiKey) {
-      this.apiKey = result.apiKey
-      return result.apiKey
+    try {
+      const result = await chrome.storage.sync.get(['apiKey'])
+      if (result.apiKey) {
+        this.apiKey = result.apiKey
+        return result.apiKey
+      }
+    } catch (error) {
+      console.error('Failed to load API key from storage:', error)
     }
     return null
   }
@@ -68,29 +93,77 @@ export class ApiClient {
    * Save API key to storage
    */
   async saveApiKey(apiKey: string) {
-    await chrome.storage.local.set({ apiKey })
-    this.apiKey = apiKey
+    try {
+      await chrome.storage.sync.set({ apiKey })
+      this.apiKey = apiKey
+    } catch (error) {
+      console.error('Failed to save API key to storage:', error)
+      throw error
+    }
   }
 
   /**
    * Clear API key from storage
    */
   async clearApiKey() {
-    await chrome.storage.local.remove(['apiKey'])
-    this.apiKey = null
+    try {
+      await chrome.storage.sync.remove(['apiKey'])
+      this.apiKey = null
+    } catch (error) {
+      console.error('Failed to clear API key from storage:', error)
+    }
+  }
+
+  /**
+   * Make HTTP request with retry logic
+   */
+  private async fetchWithRetry(
+    url: string,
+    options: RequestInit,
+    retries = 3
+  ): Promise<Response> {
+    let lastError: Error | null = null
+
+    for (let i = 0; i < retries; i++) {
+      try {
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 30000) // 30s timeout
+
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal,
+        })
+
+        clearTimeout(timeout)
+        return response
+      } catch (error) {
+        lastError = error as Error
+        console.warn(`Request failed (attempt ${i + 1}/${retries}):`, error)
+        
+        // Wait before retry (exponential backoff)
+        if (i < retries - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)))
+        }
+      }
+    }
+
+    throw lastError || new Error('Request failed after retries')
   }
 
   /**
    * Login with email and password
    */
   async login(email: string, password: string): Promise<AuthResponse> {
-    const response = await fetch(`${this.baseUrl}/api/extension/auth`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
+    const response = await this.fetchWithRetry(
+      `${this.baseUrl}/api/extension/auth`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    )
 
     if (!response.ok) {
       const error = await response.json()
@@ -117,18 +190,26 @@ export class ApiClient {
       return { valid: false, error: 'No API key found' }
     }
 
-    const response = await fetch(`${this.baseUrl}/api/extension/auth`, {
-      method: 'GET',
-      headers: {
-        'X-API-Key': this.apiKey,
-      },
-    })
+    try {
+      const response = await this.fetchWithRetry(
+        `${this.baseUrl}/api/extension/auth`,
+        {
+          method: 'GET',
+          headers: {
+            'X-API-Key': this.apiKey,
+          },
+        }
+      )
 
-    if (!response.ok) {
-      return { valid: false, error: 'Invalid API key' }
+      if (!response.ok) {
+        return { valid: false, error: 'Invalid API key' }
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Verify failed:', error)
+      return { valid: false, error: (error as Error).message }
     }
-
-    return await response.json()
   }
 
   /**
@@ -157,14 +238,17 @@ export class ApiClient {
       throw new Error('Not authenticated')
     }
 
-    const response = await fetch(`${this.baseUrl}/api/extension/capture`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': this.apiKey,
-      },
-      body: JSON.stringify(params),
-    })
+    const response = await this.fetchWithRetry(
+      `${this.baseUrl}/api/extension/capture`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': this.apiKey,
+        },
+        body: JSON.stringify(params),
+      }
+    )
 
     if (!response.ok) {
       const error = await response.json()
@@ -195,7 +279,7 @@ export class ApiClient {
     if (params?.offset) queryParams.set('offset', params.offset.toString())
     if (params?.session_id) queryParams.set('session_id', params.session_id)
 
-    const response = await fetch(
+    const response = await this.fetchWithRetry(
       `${this.baseUrl}/api/extension/capture?${queryParams}`,
       {
         method: 'GET',
@@ -229,14 +313,18 @@ export class ApiClient {
       throw new Error('Not authenticated')
     }
 
-    const response = await fetch(`${this.baseUrl}/api/extension/analyze`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': this.apiKey,
+    const response = await this.fetchWithRetry(
+      `${this.baseUrl}/api/extension/analyze`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': this.apiKey,
+        },
+        body: JSON.stringify(params),
       },
-      body: JSON.stringify(params),
-    })
+      1 // Only 1 retry for analysis (can be slow)
+    )
 
     if (!response.ok) {
       const error = await response.json()
@@ -258,7 +346,7 @@ export class ApiClient {
       throw new Error('Not authenticated')
     }
 
-    const response = await fetch(
+    const response = await this.fetchWithRetry(
       `${this.baseUrl}/api/extension/analyze?screenshot_id=${screenshotId}`,
       {
         method: 'GET',

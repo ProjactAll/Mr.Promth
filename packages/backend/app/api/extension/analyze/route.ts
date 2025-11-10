@@ -1,4 +1,10 @@
-import { createClient } from '@/lib/database'
+import {
+  getApiKeyByKey,
+  getScreenshot,
+  getDomSnapshot,
+  createAnalysisResult,
+  getAnalysisResults,
+} from '@/lib/database'
 import { NextResponse } from 'next/server'
 import { executeAgent1 } from '@/lib/agents/agent1'
 import { executeAgent2 } from '@/lib/agents/agent2'
@@ -24,6 +30,7 @@ import { executeAgent2 } from '@/lib/agents/agent2'
  *   results: object
  *   suggestions: array
  *   confidence_score: number
+ *   processing_time: number
  * }
  */
 export async function POST(request: Request) {
@@ -38,17 +45,11 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create Supabase client
-    const supabase = createClient()
-
     // Get user ID from API key
-    const { data: keyData, error: keyError } = await supabase
-      .from('api_keys')
-      .select('user_id')
-      .eq('key', apiKey)
-      .single()
-
-    if (keyError || !keyData) {
+    let keyData = null
+    try {
+      keyData = await getApiKeyByKey(apiKey)
+    } catch (error) {
       return NextResponse.json(
         { error: 'Invalid API key' },
         { status: 401 }
@@ -68,28 +69,38 @@ export async function POST(request: Request) {
       )
     }
 
-    // Fetch screenshot and DOM data
-    const { data: screenshotData, error: screenshotError } = await supabase
-      .from('screenshots')
-      .select('*, dom_snapshots(*)')
-      .eq('id', screenshot_id)
-      .eq('user_id', userId)
-      .single()
-
-    if (screenshotError || !screenshotData) {
+    // Fetch screenshot
+    let screenshotData = null
+    try {
+      screenshotData = await getScreenshot(screenshot_id)
+    } catch (error) {
       return NextResponse.json(
         { error: 'Screenshot not found' },
         { status: 404 }
       )
     }
 
+    // Verify screenshot belongs to user
+    if (screenshotData.user_id !== userId) {
+      return NextResponse.json(
+        { error: 'Screenshot not found' },
+        { status: 404 }
+      )
+    }
+
+    // Fetch DOM snapshot
+    let domSnapshot = null
+    try {
+      domSnapshot = await getDomSnapshot(screenshot_id)
+    } catch (error) {
+      console.log('No DOM snapshot found for screenshot:', screenshot_id)
+    }
+
     // Build analysis prompt
-    const domSnapshot = screenshotData.dom_snapshots?.[0]
-    
     let prompt = custom_prompt || `Analyze this webpage and generate a production-ready clone.
 
 URL: ${screenshotData.url}
-Dimensions: ${screenshotData.width}x${screenshotData.height}
+Dimensions: ${screenshotData.metadata?.width || 'unknown'}x${screenshotData.metadata?.height || 'unknown'}
 
 DOM Structure:
 ${JSON.stringify(domSnapshot?.dom_structure || {}, null, 2)}
@@ -124,13 +135,16 @@ Please provide:
         analysisResults = {
           agent1: agent1Output,
           agent2: agent2Output,
+          analysis_type: 'full',
+          screenshot_url: screenshotData.url,
         }
 
         suggestions = [
           'Project structure designed',
           'Database schema created',
           'API endpoints defined',
-          'Ready for code generation',
+          'Component architecture planned',
+          'Ready for code generation (Agent 3-7)',
         ]
 
         confidenceScore = 0.85
@@ -141,12 +155,15 @@ Please provide:
 
         analysisResults = {
           agent1: agent1Output,
+          analysis_type: 'quick',
+          screenshot_url: screenshotData.url,
         }
 
         suggestions = [
           'Project type identified',
           'Features extracted',
           'Tech stack recommended',
+          'Basic structure outlined',
           'Run full analysis for complete architecture',
         ]
 
@@ -164,21 +181,18 @@ Please provide:
     const processingTime = Date.now() - startTime
 
     // Save analysis results to database
-    const { data: analysisData, error: analysisError } = await supabase
-      .from('analysis_results')
-      .insert({
-        screenshot_id: screenshot_id,
-        agent_type: analysis_type,
-        analysis_data: analysisResults,
-        suggestions: suggestions,
-        confidence_score: confidenceScore,
-        processing_time: processingTime,
-      })
-      .select()
-      .single()
-
-    if (analysisError) {
-      console.error('Error saving analysis results:', analysisError)
+    let analysisData = null
+    try {
+      analysisData = await createAnalysisResult(
+        screenshot_id,
+        analysis_type,
+        analysisResults,
+        suggestions,
+        confidenceScore,
+        processingTime
+      )
+    } catch (error) {
+      console.error('Error saving analysis results:', error)
       return NextResponse.json(
         { error: 'Failed to save analysis results' },
         { status: 500 }
@@ -204,12 +218,15 @@ Please provide:
 }
 
 /**
- * GET /api/extension/analyze/:screenshot_id
+ * GET /api/extension/analyze
  * 
  * Get analysis results for a screenshot
  * 
  * Headers:
  * X-API-Key: string
+ * 
+ * Query Parameters:
+ * screenshot_id: string
  * 
  * Response:
  * {
@@ -228,17 +245,11 @@ export async function GET(request: Request) {
       )
     }
 
-    // Create Supabase client
-    const supabase = createClient()
-
     // Get user ID from API key
-    const { data: keyData, error: keyError } = await supabase
-      .from('api_keys')
-      .select('user_id')
-      .eq('key', apiKey)
-      .single()
-
-    if (keyError || !keyData) {
+    let keyData = null
+    try {
+      keyData = await getApiKeyByKey(apiKey)
+    } catch (error) {
       return NextResponse.json(
         { error: 'Invalid API key' },
         { status: 401 }
@@ -258,15 +269,18 @@ export async function GET(request: Request) {
       )
     }
 
-    // Verify screenshot belongs to user
-    const { data: screenshotData, error: screenshotError } = await supabase
-      .from('screenshots')
-      .select('id')
-      .eq('id', screenshotId)
-      .eq('user_id', userId)
-      .single()
+    // Fetch screenshot and verify ownership
+    let screenshotData = null
+    try {
+      screenshotData = await getScreenshot(screenshotId)
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Screenshot not found' },
+        { status: 404 }
+      )
+    }
 
-    if (screenshotError || !screenshotData) {
+    if (screenshotData.user_id !== userId) {
       return NextResponse.json(
         { error: 'Screenshot not found' },
         { status: 404 }
@@ -274,14 +288,11 @@ export async function GET(request: Request) {
     }
 
     // Get all analysis results for this screenshot
-    const { data: analyses, error: analysesError } = await supabase
-      .from('analysis_results')
-      .select('*')
-      .eq('screenshot_id', screenshotId)
-      .order('created_at', { ascending: false })
-
-    if (analysesError) {
-      console.error('Error fetching analyses:', analysesError)
+    let analyses = []
+    try {
+      analyses = await getAnalysisResults(screenshotId)
+    } catch (error) {
+      console.error('Error fetching analyses:', error)
       return NextResponse.json(
         { error: 'Failed to fetch analyses' },
         { status: 500 }

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/database'
+import { createClient, createServiceClient, getExtensionApiKey, createExtensionApiKey, updateApiKeyLastUsed, getUserProfile } from '@/lib/database'
 import { NextResponse } from 'next/server'
 import { randomBytes } from 'crypto'
 
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create Supabase client
+    // Create Supabase client with anon key for authentication
     const supabase = createClient()
 
     // Authenticate user
@@ -49,47 +49,44 @@ export async function POST(request: Request) {
 
     const userId = authData.user.id
 
-    // Check if user already has an API key for extension
-    const { data: existingKeys, error: fetchError } = await supabase
-      .from('api_keys')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('name', 'Extension')
-      .limit(1)
-
-    if (fetchError) {
-      console.error('Error fetching API keys:', fetchError)
-      return NextResponse.json(
-        { error: 'Failed to fetch API keys' },
-        { status: 500 }
-      )
+    // Check if user already has an API key for extension (using service client)
+    let existingKey = null
+    try {
+      existingKey = await getExtensionApiKey(userId)
+    } catch (error) {
+      // No existing key, will create new one
     }
 
     let apiKey: string
 
-    if (existingKeys && existingKeys.length > 0) {
+    if (existingKey) {
       // Return existing API key
-      apiKey = existingKeys[0].key
+      apiKey = existingKey.key
+      
+      // Update last used timestamp
+      await updateApiKeyLastUsed(apiKey)
     } else {
       // Generate new API key
       apiKey = `mrp_${randomBytes(32).toString('hex')}`
 
-      // Store API key in database
-      const { error: insertError } = await supabase
-        .from('api_keys')
-        .insert({
-          user_id: userId,
-          name: 'Extension',
-          key: apiKey,
-        })
-
-      if (insertError) {
-        console.error('Error creating API key:', insertError)
+      // Store API key in database (using service client)
+      try {
+        await createExtensionApiKey(userId, apiKey)
+      } catch (error) {
+        console.error('Error creating API key:', error)
         return NextResponse.json(
           { error: 'Failed to create API key' },
           { status: 500 }
         )
       }
+    }
+
+    // Get user profile
+    let userProfile = null
+    try {
+      userProfile = await getUserProfile(userId)
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
     }
 
     // Return API key and user info
@@ -99,7 +96,8 @@ export async function POST(request: Request) {
       user: {
         id: authData.user.id,
         email: authData.user.email,
-        display_name: authData.user.user_metadata?.display_name || authData.user.email,
+        display_name: userProfile?.display_name || authData.user.user_metadata?.display_name || authData.user.email,
+        avatar_url: userProfile?.avatar_url || authData.user.user_metadata?.avatar_url,
       },
     })
 
@@ -138,18 +136,25 @@ export async function GET(request: Request) {
       )
     }
 
-    // Create Supabase client
-    const supabase = createClient()
+    // Verify API key (using service client)
+    let keyData = null
+    try {
+      const { data } = await createServiceClient()
+        .from('api_keys')
+        .select('user_id')
+        .eq('key', apiKey)
+        .eq('name', 'Extension')
+        .single()
+      
+      keyData = data
+    } catch (error) {
+      return NextResponse.json(
+        { valid: false, error: 'Invalid API key' },
+        { status: 401 }
+      )
+    }
 
-    // Verify API key
-    const { data: keyData, error: keyError } = await supabase
-      .from('api_keys')
-      .select('user_id')
-      .eq('key', apiKey)
-      .limit(1)
-      .single()
-
-    if (keyError || !keyData) {
+    if (!keyData) {
       return NextResponse.json(
         { valid: false, error: 'Invalid API key' },
         { status: 401 }
@@ -157,26 +162,20 @@ export async function GET(request: Request) {
     }
 
     // Update last_used_at
-    await supabase
-      .from('api_keys')
-      .update({ last_used_at: new Date().toISOString() })
-      .eq('key', apiKey)
+    await updateApiKeyLastUsed(apiKey)
 
-    // Get user info
-    const { data: userData, error: userError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', keyData.user_id)
-      .single()
-
-    if (userError) {
-      console.error('Error fetching user:', userError)
+    // Get user profile
+    let userData = null
+    try {
+      userData = await getUserProfile(keyData.user_id)
+    } catch (error) {
+      console.error('Error fetching user:', error)
     }
 
     return NextResponse.json({
       valid: true,
       user_id: keyData.user_id,
-      user: userData || null,
+      user: userData,
     })
 
   } catch (error) {
