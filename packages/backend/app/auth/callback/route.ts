@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 
 function resolveRedirectPath(url: URL): string {
-  const redirectParam = url.searchParams.get('redirect_to') ?? url.searchParams.get('next') ?? '/app/dashboard';
+  const redirectParam = url.searchParams.get('redirect_to') ?? url.searchParams.get('next') ?? '/chat';
 
   if (!redirectParam.startsWith('/')) {
     return '/';

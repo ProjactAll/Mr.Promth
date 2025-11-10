@@ -397,22 +397,101 @@ export async function createChatSession(userId: string, title: string, metadata?
 export async function getMessages(sessionId: string) {
   const supabase = createServiceClient()
   
-  // Note: messages table doesn't exist in current schema
-  // This is a placeholder that returns empty array
-  // TODO: Add messages table or use extension_logs
-  return []
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('session_id', sessionId)
+    .order('created_at', { ascending: true })
+  
+  if (error) throw error
+  return data || []
 }
 
 export async function saveMessage(
   sessionId: string,
   sender: 'user' | 'assistant' | 'system',
-  content: string
+  content: string,
+  metadata?: any
 ) {
   const supabase = createServiceClient()
   
-  // Note: messages table doesn't exist in current schema
-  // This is a placeholder that logs to extension_logs
-  // TODO: Add messages table or modify schema
+  const { data, error } = await supabase
+    .from('messages')
+    .insert({
+      session_id: sessionId,
+      role: sender,
+      content: content,
+      metadata: metadata || {}
+    })
+    .select()
+    .single()
+  
+  if (error) throw error
+  return data
+}
+
+export async function createChatSession(userId: string, title?: string) {
+  const supabase = createServiceClient()
+  
+  const { data, error } = await supabase
+    .from('chat_sessions')
+    .insert({
+      user_id: userId,
+      title: title || 'New Chat'
+    })
+    .select()
+    .single()
+  
+  if (error) throw error
+  return data
+}
+
+export async function getChatSessions(userId: string) {
+  const supabase = createServiceClient()
+  
+  const { data, error } = await supabase
+    .from('chat_sessions')
+    .select('*')
+    .eq('user_id', userId)
+    .order('updated_at', { ascending: false })
+  
+  if (error) throw error
+  return data || []
+}
+
+export async function updateChatSession(sessionId: string, updates: { title?: string }) {
+  const supabase = createServiceClient()
+  
+  const { data, error } = await supabase
+    .from('chat_sessions')
+    .update(updates)
+    .eq('id', sessionId)
+    .select()
+    .single()
+  
+  if (error) throw error
+  return data
+}
+
+export async function deleteChatSession(sessionId: string) {
+  const supabase = createServiceClient()
+  
+  const { error } = await supabase
+    .from('chat_sessions')
+    .delete()
+    .eq('id', sessionId)
+  
+  if (error) throw error
+  return true
+}
+
+// Legacy function - keep for backward compatibility
+export async function saveLegacyMessage(
+  sessionId: string,
+  sender: 'user' | 'assistant' | 'system',
+  content: string
+) {
+  const supabase = createServiceClient()
   
   const { data: session } = await supabase
     .from('extension_sessions')
