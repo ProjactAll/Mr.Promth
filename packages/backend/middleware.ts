@@ -19,7 +19,7 @@ export async function middleware(req: NextRequest) {
   );
 
   // Define public paths that should always be accessible
-  const publicPaths = ['/', '/login', '/signup', '/auth/callback', '/api'];
+  const publicPaths = ['/', '/auth/login', '/auth/signup', '/auth/callback', '/auth', '/api', '/about', '/docs'];
   const isPublicPath = publicPaths.some(path =>
     req.nextUrl.pathname.startsWith(path)
   );
@@ -27,7 +27,7 @@ export async function middleware(req: NextRequest) {
   // If user is not authenticated and is trying to access a protected path
   if (!session && isProtectedPath && !isPublicPath) {
     // Redirect to login page
-    const redirectUrl = new URL('/login', req.url);
+    const redirectUrl = new URL('/auth/login', req.url);
     redirectUrl.searchParams.set('redirect', req.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
   }
@@ -61,9 +61,9 @@ export async function middleware(req: NextRequest) {
   }
 
   // If user is authenticated and trying to access login/signup pages
-  if (session && (req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/signup')) {
-    // Redirect to app
-    return NextResponse.redirect(new URL('/app/dashboard', req.url));
+  if (session && (req.nextUrl.pathname === '/auth/login' || req.nextUrl.pathname === '/auth/signup')) {
+    // Redirect to chat
+    return NextResponse.redirect(new URL('/chat', req.url));
   }
 
   return res;

@@ -60,7 +60,7 @@ export default function LandingPage() {
             </Link>
             <Link href="/chat">
               <Button size="sm" className="btn-primary gap-2">
-                💬 เริ่มใช้งาน
+                เริ่มใช้งาน
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
