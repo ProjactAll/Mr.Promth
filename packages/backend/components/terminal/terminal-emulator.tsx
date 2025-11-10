@@ -25,6 +25,7 @@ export function TerminalEmulator({
   const fitAddon = useRef<FitAddon | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(sessionId || null)
+  const [currentCommand, setCurrentCommand] = useState('')
   const supabase = createClientComponentClient()
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import type { ChatCompletion } from "openai/resources/chat/completions";
-import { getLoadBalancer } from './ai/load-balancer';
+// Load balancer removed - using single API key for all endpoints
 
 const VANCHIN_BASE_URL =
   process.env.VANCHIN_BASE_URL ?? "https://vanchin.streamlake.ai/api/gateway/v1/endpoints";
@@ -36,21 +36,25 @@ export class MissingVanchinConfigurationError extends Error {
   }
 }
 
-export async function getAgentApiKey(agentId: AgentIdentifier): Promise<{ apiKey: string; endpoint: string; index: number }> {
-  // Use load balancer to get best available endpoint
-  const loadBalancer = getLoadBalancer();
-  const endpointInfo = loadBalancer.getAgentEndpoint(agentId);
+export async function getAgentApiKey(agentId: AgentIdentifier): Promise<{ apiKey: string; endpoint: string }> {
+  const apiKey = process.env.VC_API_KEY || process.env.VANCHIN_API_KEY;
+  const endpoint = AGENT_ENDPOINTS[agentId];
   
-  if (!endpointInfo) {
+  if (!apiKey) {
     throw new MissingVanchinConfigurationError(
-      `No available Vanchin AI endpoints for ${agentId}. Please check your environment variables.`,
+      `VC_API_KEY environment variable is not set. Please set it to your Vanchin AI API key.`,
+    );
+  }
+  
+  if (!endpoint) {
+    throw new MissingVanchinConfigurationError(
+      `No endpoint found for ${agentId}`,
     );
   }
   
   return {
-    apiKey: endpointInfo.apiKey,
-    endpoint: endpointInfo.endpoint,
-    index: endpointInfo.index
+    apiKey,
+    endpoint
   };
 }
 
@@ -82,8 +86,7 @@ export async function callAgent(
     throw new Error("Streaming mode is not supported for callAgent");
   }
 
-  const loadBalancer = getLoadBalancer();
-  const { apiKey, endpoint, index } = await getAgentApiKey(agentId);
+  const { apiKey, endpoint } = await getAgentApiKey(agentId);
   const client = createVanchinClient(apiKey);
 
   try {
@@ -109,13 +112,9 @@ export async function callAgent(
     const chatCompletion = completion as ChatCompletion;
     const content = chatCompletion.choices[0]?.message?.content ?? "";
     
-    // Report success to load balancer
-    loadBalancer.reportSuccess(index);
-    
     return content.trim();
   } catch (error) {
-    // Report error to load balancer
-    loadBalancer.reportError(index, error as Error);
+    console.error(`Error calling ${agentId}:`, error);
     throw error;
   }
 }

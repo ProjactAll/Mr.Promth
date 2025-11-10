@@ -2,7 +2,7 @@ import { createLogger } from '@/lib/utils/logger'
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, unlink } from "fs/promises";
+import { writeFile, unlink, readFile } from "fs/promises";
 import { join } from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
@@ -135,7 +135,7 @@ async function extractTextFromPDF(pdfPath: string): Promise<{ text: string; page
 }
 
 // Helper function to extract images from PDF
-async function extractImagesFromPDF(pdfPath: string): Promise<{ images: string[]; count: number }> {
+async function extractImagesFromPDF(pdfPath: string): Promise<{ images: { filename: string; url: string }[]; count: number }> {
   try {
     const outputDir = join("/tmp", `pdf-images-${Date.now()}`);
     await execAsync(`mkdir -p "${outputDir}"`);
@@ -215,7 +215,7 @@ async function getPDFMetadata(pdfPath: string): Promise<any> {
 }
 
 // Helper function to convert PDF to images
-async function convertPDFToImages(pdfPath: string): Promise<{ images: string[]; count: number }> {
+async function convertPDFToImages(pdfPath: string): Promise<{ images: { filename: string; url: string; page: number }[]; count: number }> {
   try {
     const outputDir = join("/tmp", `pdf-pages-${Date.now()}`);
     await execAsync(`mkdir -p "${outputDir}"`);

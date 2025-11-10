@@ -18,7 +18,7 @@ class ProviderTestError extends Error {
 }
 
 async function verifyVanchin(key: string): Promise<string> {
-  const response = await fetch('https://api.openai.com/v1/models', {
+  const response = await fetch('https://vanchin.streamlake.ai/api/gateway/v1/models', {
     headers: {
       Authorization: `Bearer ${key}`,
     },

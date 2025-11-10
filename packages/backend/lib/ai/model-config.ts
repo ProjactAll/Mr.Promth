@@ -182,18 +182,10 @@ export function getNextModelForAgent(
       return getRandomAgentModel(agent)
 
     case 'least-used':
-      // Use load balancer for least-used strategy
-      const { getLoadBalancer } = require('./load-balancer');
-      const loadBalancer = getLoadBalancer();
-      const endpointInfo = loadBalancer.getAgentEndpoint(agent);
-      
-      if (endpointInfo) {
-        // Return model based on load balancer selection
-        return endpointInfo.endpoint;
-      }
-      
-      // Fallback to primary if load balancer fails
-      return config.primary[0]
+      // Least-used strategy simplified - use round-robin instead
+      const rrIndex = roundRobinCounters[agent] % allModels.length
+      roundRobinCounters[agent]++
+      return allModels[rrIndex]
 
     default:
       return config.primary[0]

@@ -365,7 +365,7 @@ export async function updateUserProfile(
 // Chat Sessions (for backward compatibility with old API routes)
 // ============================================================================
 
-export async function getChatSessions(userId: string) {
+export async function getExtensionSessions(userId: string) {
   const supabase = createServiceClient()
   
   const { data, error } = await supabase
@@ -373,22 +373,6 @@ export async function getChatSessions(userId: string) {
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
-
-  if (error) throw error
-  return data
-}
-
-export async function createChatSession(userId: string, title: string, metadata?: any) {
-  const supabase = createServiceClient()
-  
-  const { data, error } = await supabase
-    .from('extension_sessions')
-    .insert({
-      user_id: userId,
-      browser_info: metadata || {},
-    })
-    .select()
-    .single()
 
   if (error) throw error
   return data

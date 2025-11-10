@@ -42,7 +42,7 @@ export function PromptInput({ onGenerate, isLoading = false }: PromptInputProps)
   };
 
   const handleGitHubImport = async () => {
-    const url = prompt('Enter GitHub repository URL (e.g., https://github.com/user/repo):');
+    const url = window.prompt('Enter GitHub repository URL (e.g., https://github.com/user/repo):');
     
     if (!url) return;
     
