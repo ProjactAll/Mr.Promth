@@ -1,9 +1,10 @@
-import { createLogger } from '@/lib/utils/logger'
+import { createLogger } from '@/lib/utils/logger';
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, unlink, readFile } from "fs/promises";
 import { join } from "path";
+import sharp from 'sharp';
 
 export const dynamic = "force-dynamic";
 
@@ -117,15 +118,29 @@ export async function POST(request: NextRequest) {
 // Helper function to analyze image
 async function analyzeImage(imagePath: string, buffer: Buffer): Promise<any> {
   try {
-    // Get basic image info
-    const stats = await import("fs/promises").then(fs => fs.stat(imagePath));
+    const image = sharp(buffer);
+    const metadata = await image.metadata();
+    const stats = await image.stats();
     
-    // For more detailed analysis, we would use a library like sharp
-    // For now, return basic info
     return {
-      size: stats.size,
-      format: imagePath.split(".").pop(),
-      // TODO: Add width, height, color space, etc. using sharp
+      width: metadata.width,
+      height: metadata.height,
+      format: metadata.format,
+      size: metadata.size,
+      space: metadata.space,
+      channels: metadata.channels,
+      depth: metadata.depth,
+      density: metadata.density,
+      hasAlpha: metadata.hasAlpha,
+      orientation: metadata.orientation,
+      isProgressive: metadata.isProgressive,
+      pages: metadata.pages,
+      pageHeight: metadata.pageHeight,
+      stats: {
+        channels: stats.channels,
+        isOpaque: stats.isOpaque,
+        entropy: stats.entropy
+      }
     };
   } catch (error) {
     logger.error('Error analyzing image:', error instanceof Error ? error : new Error(String(error)));
@@ -134,12 +149,30 @@ async function analyzeImage(imagePath: string, buffer: Buffer): Promise<any> {
 }
 
 // Helper function to perform OCR
-async function performOCR(imagePath: string): Promise<{ text: string }> {
+async function performOCR(imagePath: string): Promise<{ text: string; confidence: number; words: any[] }> {
   try {
-    // TODO: Implement OCR using Tesseract or cloud service
-    // For now, return placeholder
+    const Tesseract = require('tesseract.js');
+    
+    const { data } = await Tesseract.recognize(
+      imagePath,
+      'eng',
+      {
+        logger: (m: any) => {
+          if (m.status === 'recognizing text') {
+            logger.info(`OCR Progress: ${Math.round(m.progress * 100)}%`);
+          }
+        }
+      }
+    );
+    
     return {
-      text: "OCR functionality coming soon"
+      text: data.text,
+      confidence: data.confidence,
+      words: data.words.map((w: any) => ({
+        text: w.text,
+        confidence: w.confidence,
+        bbox: w.bbox
+      }))
     };
   } catch (error) {
     logger.error('Error performing OCR:', error instanceof Error ? error : new Error(String(error)));
@@ -171,12 +204,26 @@ async function describeImage(imagePath: string, buffer: Buffer): Promise<{ descr
 // Helper function to resize image
 async function resizeImage(imagePath: string, width: number, height: number): Promise<any> {
   try {
-    // TODO: Implement image resizing using sharp
-    // For now, return placeholder
+    const outputPath = imagePath.replace(/\.(\w+)$/, `-resized-${width}x${height}.$1`);
+    
+    await sharp(imagePath)
+      .resize(width, height, {
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+      .toFile(outputPath);
+    
+    const buffer = await readFile(outputPath);
+    const base64 = buffer.toString('base64');
+    
+    // Clean up resized file
+    await unlink(outputPath);
+    
     return {
       width,
       height,
-      message: "Image resize functionality coming soon"
+      base64,
+      message: "Image resized successfully"
     };
   } catch (error) {
     logger.error('Error resizing image:', error instanceof Error ? error : new Error(String(error)));
@@ -187,11 +234,41 @@ async function resizeImage(imagePath: string, width: number, height: number): Pr
 // Helper function to convert image format
 async function convertImage(imagePath: string, format: string): Promise<any> {
   try {
-    // TODO: Implement image conversion using sharp
-    // For now, return placeholder
+    const outputPath = imagePath.replace(/\.\w+$/, `.${format}`);
+    
+    let image = sharp(imagePath);
+    
+    // Apply format-specific options
+    switch (format.toLowerCase()) {
+      case 'jpeg':
+      case 'jpg':
+        image = image.jpeg({ quality: 90 });
+        break;
+      case 'png':
+        image = image.png({ compressionLevel: 9 });
+        break;
+      case 'webp':
+        image = image.webp({ quality: 90 });
+        break;
+      case 'avif':
+        image = image.avif({ quality: 90 });
+        break;
+      default:
+        throw new Error(`Unsupported format: ${format}`);
+    }
+    
+    await image.toFile(outputPath);
+    
+    const buffer = await readFile(outputPath);
+    const base64 = buffer.toString('base64');
+    
+    // Clean up converted file
+    await unlink(outputPath);
+    
     return {
       format,
-      message: "Image conversion functionality coming soon"
+      base64,
+      message: "Image converted successfully"
     };
   } catch (error) {
     logger.error('Error converting image:', error instanceof Error ? error : new Error(String(error)));

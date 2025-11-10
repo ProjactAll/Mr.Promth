@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import type { ChatCompletion } from "openai/resources/chat/completions";
+import { getLoadBalancer } from './ai/load-balancer';
 
 const VANCHIN_BASE_URL =
   process.env.VANCHIN_BASE_URL ?? "https://vanchin.streamlake.ai/api/gateway/v1/endpoints";
@@ -35,23 +36,22 @@ export class MissingVanchinConfigurationError extends Error {
   }
 }
 
-export async function getAgentApiKey(agentId: AgentIdentifier): Promise<string> {
-  // Try new format first: VANCHIN_AGENT_AGENT1_KEY
-  const newFormatKey = process.env[`VANCHIN_AGENT_${agentId.toUpperCase()}_KEY`];
-  if (newFormatKey) {
-    return newFormatKey;
+export async function getAgentApiKey(agentId: AgentIdentifier): Promise<{ apiKey: string; endpoint: string; index: number }> {
+  // Use load balancer to get best available endpoint
+  const loadBalancer = getLoadBalancer();
+  const endpointInfo = loadBalancer.getAgentEndpoint(agentId);
+  
+  if (!endpointInfo) {
+    throw new MissingVanchinConfigurationError(
+      `No available Vanchin AI endpoints for ${agentId}. Please check your environment variables.`,
+    );
   }
   
-  // Try old format: VANCHIN_API_KEY_1
-  const keyNumber = AGENT_TO_KEY_MAP[agentId];
-  const oldFormatKey = process.env[`VANCHIN_API_KEY_${keyNumber}`];
-  if (oldFormatKey) {
-    return oldFormatKey;
-  }
-  
-  throw new MissingVanchinConfigurationError(
-    `VanchinAI API key missing for ${agentId}. Please set VANCHIN_AGENT_${agentId.toUpperCase()}_KEY or VANCHIN_API_KEY_${keyNumber}.`,
-  );
+  return {
+    apiKey: endpointInfo.apiKey,
+    endpoint: endpointInfo.endpoint,
+    index: endpointInfo.index
+  };
 }
 
 export function createVanchinClient(apiKey: string) {
@@ -82,32 +82,42 @@ export async function callAgent(
     throw new Error("Streaming mode is not supported for callAgent");
   }
 
-  const apiKey = await getAgentApiKey(agentId);
+  const loadBalancer = getLoadBalancer();
+  const { apiKey, endpoint, index } = await getAgentApiKey(agentId);
   const client = createVanchinClient(apiKey);
-  const model = AGENT_ENDPOINTS[agentId];
 
-  const completion = await client.chat.completions.create({
-    model,
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are a world-class software developer working within the Mr.Promth agent chain. Follow instructions precisely and return structured results.",
-      },
-      { role: "user", content: prompt },
-    ],
-    temperature: options.temperature ?? 0.7,
-    max_tokens: options.max_tokens ?? 2000,
-    stream: options.stream ?? false,
-  });
+  try {
+    const completion = await client.chat.completions.create({
+      model: endpoint,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a world-class software developer working within the Mr.Promth agent chain. Follow instructions precisely and return structured results.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: options.temperature ?? 0.7,
+      max_tokens: options.max_tokens ?? 2000,
+      stream: options.stream ?? false,
+    });
 
-  if (!("choices" in completion)) {
-    throw new Error("Streaming responses are not supported in callAgent");
+    if (!("choices" in completion)) {
+      throw new Error("Streaming responses are not supported in callAgent");
+    }
+
+    const chatCompletion = completion as ChatCompletion;
+    const content = chatCompletion.choices[0]?.message?.content ?? "";
+    
+    // Report success to load balancer
+    loadBalancer.reportSuccess(index);
+    
+    return content.trim();
+  } catch (error) {
+    // Report error to load balancer
+    loadBalancer.reportError(index, error as Error);
+    throw error;
   }
-
-  const chatCompletion = completion as ChatCompletion;
-  const content = chatCompletion.choices[0]?.message?.content ?? "";
-  return content.trim();
 }
 
 const JSON_FENCE_REGEX = /```json\s*([\s\S]+?)```/i;

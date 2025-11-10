@@ -3,6 +3,7 @@ import { readFileFromStorage, writeFileToStorage, deleteFileFromStorage, STORAGE
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from 'zod';
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +54,21 @@ export async function POST(
     const { inputs } = body;
 
     // Validate inputs against schema
-    // TODO: Add JSON Schema validation
+    if (agent.input_schema) {
+      try {
+        const schema = z.object(agent.input_schema);
+        schema.parse(inputs);
+      } catch (validationError) {
+        logger.error('Input validation failed:', validationError instanceof Error ? validationError : new Error(String(validationError)));
+        return NextResponse.json(
+          { 
+            error: "Invalid inputs",
+            details: validationError instanceof z.ZodError ? validationError.errors : "Validation failed"
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     // Create execution record
     const { data: execution, error: executionError } = await supabase
@@ -289,11 +304,24 @@ function getNestedValue(obj: any, path: string): any {
 }
 
 function evaluateCondition(condition: string, context: any): boolean {
-  // Simple condition evaluation
-  // TODO: Implement more robust and safe evaluation
+  // Safe condition evaluation using allowlist of operators
   try {
-    const func = new Function('context', `with(context) { return ${condition}; }`);
-    return func(context);
+    // Sanitize condition - only allow safe operators and property access
+    const sanitized = condition
+      .replace(/[^a-zA-Z0-9_.\s()===!<>&|]/g, '')
+      .trim();
+    
+    if (!sanitized || sanitized !== condition.replace(/\s+/g, ' ').trim()) {
+      logger.warn('Potentially unsafe condition detected:', { condition });
+      return false;
+    }
+
+    // Create a safe evaluation context with only allowed properties
+    const safeContext = JSON.parse(JSON.stringify(context)); // Deep clone to prevent modifications
+    
+    // Use safer evaluation without 'with' statement
+    const func = new Function(...Object.keys(safeContext), `return ${sanitized};`);
+    return Boolean(func(...Object.values(safeContext)));
   } catch (error) {
     logger.error('Error evaluating condition:', error instanceof Error ? error : new Error(String(error)));
     return false;
