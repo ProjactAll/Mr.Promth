@@ -86,12 +86,19 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            🚀 เข้าสู่ระบบ MR.Promth
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            AI Agent สร้างโค้ดอัตโนมัติด้วย 19 AI Models
-          </p>
+          <div className="text-center">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-extrabold text-gray-900">
+              เข้าสู่ระบบ MR.Promth
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              AI Agent Platform สำหรับพัฒนาโค้ดอัตโนมัติ
+            </p>
+          </div>
         </div>
         
         {/* OAuth Buttons */}

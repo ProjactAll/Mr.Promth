@@ -6,7 +6,7 @@ import { decryptSecret } from '@/utils/security';
 export const dynamic = 'force-dynamic';
 
 const PROVIDER_LABELS: Record<string, string> = {
-  openai: 'OpenAI',
+  vanchin: 'Vanchin AI',
   anthropic: 'Anthropic',
 };
 
@@ -17,7 +17,7 @@ class ProviderTestError extends Error {
   }
 }
 
-async function verifyOpenAI(key: string): Promise<string> {
+async function verifyVanchin AI(key: string): Promise<string> {
   const response = await fetch('https://api.openai.com/v1/models', {
     headers: {
       Authorization: `Bearer ${key}`,
@@ -25,11 +25,11 @@ async function verifyOpenAI(key: string): Promise<string> {
   });
 
   if (!response.ok) {
-    const detail = (await response.text()) || response.statusText || 'OpenAI API error';
+    const detail = (await response.text()) || response.statusText || 'Vanchin AI API error';
     throw new ProviderTestError(detail, response.status);
   }
 
-  return 'OpenAI key verified successfully.';
+  return 'Vanchin AI key verified successfully.';
 }
 
 async function verifyAnthropic(key: string): Promise<string> {
@@ -52,7 +52,7 @@ async function verifyProvider(provider: string, key: string): Promise<string> {
   const normalized = provider.toLowerCase();
   switch (normalized) {
     case 'openai':
-      return await verifyOpenAI(key);
+      return await verifyVanchin AI(key);
     case 'anthropic':
       return await verifyAnthropic(key);
     default:

@@ -27,7 +27,7 @@ const STEP_NAMES = [
   'Setting up Monitoring'
 ]
 
-const STEP_ICONS = ['🚀', '🔍', '📝', '⚙️', '🎨', '🧪', '🚢', '📊']
+const STEP_ICONS = ['', '🔍', '', '⚙️', '🎨', '', '🚢', '']
 
 export default function WorkflowStatusPage({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -114,7 +114,7 @@ export default function WorkflowStatusPage({ params }: { params: { id: string } 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 max-w-md">
           <div className="text-center">
-            <div className="text-6xl mb-4">❌</div>
+            <div className="text-6xl mb-4"></div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Error
             </h2>
@@ -195,7 +195,7 @@ export default function WorkflowStatusPage({ params }: { params: { id: string } 
                     <div className={`text-3xl mr-4 ${
                       isCurrentStep ? 'animate-bounce' : ''
                     }`}>
-                      {isCompletedStep ? '✅' : STEP_ICONS[index]}
+                      {isCompletedStep ? '' : STEP_ICONS[index]}
                     </div>
                     <div className="flex-1">
                       <h3 className={`font-semibold ${
@@ -222,8 +222,8 @@ export default function WorkflowStatusPage({ params }: { params: { id: string } 
             {/* Status Message */}
             <div className="mt-8 p-4 rounded-lg bg-gray-100 dark:bg-gray-700">
               <p className="text-center text-gray-700 dark:text-gray-300">
-                {isCompleted && '🎉 Workflow completed successfully!'}
-                {isFailed && '❌ Workflow failed. Check errors below.'}
+                {isCompleted && ' Workflow completed successfully!'}
+                {isFailed && ' Workflow failed. Check errors below.'}
                 {isInProgress && `⏳ ${STEP_NAMES[workflow.currentStep - 1] || 'Processing'}...`}
               </p>
             </div>

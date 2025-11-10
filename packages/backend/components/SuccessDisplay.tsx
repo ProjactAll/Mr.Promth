@@ -11,7 +11,7 @@ export function SuccessDisplay({
   message, 
   details, 
   onDismiss,
-  icon = '✅'
+  icon = ''
 }: SuccessDisplayProps) {
   return (
     <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg shadow-sm">
@@ -111,7 +111,7 @@ export function WarningDisplay({
   message, 
   details, 
   onDismiss,
-  icon = '⚠️'
+  icon = ''
 }: WarningDisplayProps) {
   return (
     <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg shadow-sm">

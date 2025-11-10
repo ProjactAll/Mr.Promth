@@ -102,8 +102,8 @@ export async function POST(
               content: promptText
             }
           ],
-          provider: provider || "openai",
-          model: model || "gpt-4",
+          provider: "vanchin",
+          model: model || "auto",
           stream: false
         })
       });

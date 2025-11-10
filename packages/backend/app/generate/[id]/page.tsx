@@ -18,14 +18,14 @@ interface WorkflowState {
 }
 
 const STEP_DETAILS = [
-  { name: 'Initializing', icon: '🚀', description: 'Setting up workflow environment' },
+  { name: 'Initializing', icon: '', description: 'Setting up workflow environment' },
   { name: 'Analyzing Prompt', icon: '🔍', description: 'Understanding your requirements with AI' },
-  { name: 'Expanding Requirements', icon: '📝', description: 'Creating detailed specifications' },
+  { name: 'Expanding Requirements', icon: '', description: 'Creating detailed specifications' },
   { name: 'Generating Backend', icon: '⚙️', description: 'Creating API routes and database schema' },
   { name: 'Generating Frontend', icon: '🎨', description: 'Building UI components and pages' },
-  { name: 'Running Tests', icon: '🧪', description: 'Generating and running automated tests' },
+  { name: 'Running Tests', icon: '', description: 'Generating and running automated tests' },
   { name: 'Deploying', icon: '🚢', description: 'Deploying to Vercel' },
-  { name: 'Setting up Monitoring', icon: '📊', description: 'Configuring health checks and monitoring' }
+  { name: 'Setting up Monitoring', icon: '', description: 'Configuring health checks and monitoring' }
 ]
 
 export default function WorkflowStatusPageEnhanced({ params }: { params: { id: string } }) {
@@ -123,7 +123,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
           <div className="relative">
             <div className="animate-spin rounded-full h-20 w-20 border-4 border-gray-200 border-t-blue-600 mx-auto mb-4"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-2xl">🚀</span>
+              <span className="text-2xl"></span>
             </div>
           </div>
           <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">Loading workflow...</p>
@@ -137,7 +137,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8 max-w-md">
           <div className="text-center">
-            <div className="text-6xl mb-4 animate-pulse">❌</div>
+            <div className="text-6xl mb-4 animate-pulse"></div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Error
             </h2>
@@ -167,7 +167,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-block p-3 bg-blue-100 dark:bg-blue-900 rounded-full mb-4">
-              <span className="text-4xl">🚀</span>
+              <span className="text-4xl"></span>
             </div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
               {workflow.projectName}
@@ -239,7 +239,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
                         <div className={`text-4xl mr-4 ${
                           isCurrentStep ? 'animate-bounce' : ''
                         }`}>
-                          {isCompletedStep ? '✅' : step.icon}
+                          {isCompletedStep ? '' : step.icon}
                         </div>
                         
                         {/* Step Content */}
@@ -283,7 +283,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
                   {isCompleted && (
                     <div className="p-6 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-500">
                       <div className="flex items-center gap-4">
-                        <span className="text-5xl">🎉</span>
+                        <span className="text-5xl"></span>
                         <div>
                           <h3 className="text-2xl font-bold text-green-900 dark:text-green-300 mb-1">
                             Workflow Completed!
@@ -299,7 +299,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
                   {isFailed && (
                     <div className="p-6 rounded-xl bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border-2 border-red-500">
                       <div className="flex items-center gap-4">
-                        <span className="text-5xl">❌</span>
+                        <span className="text-5xl"></span>
                         <div>
                           <h3 className="text-2xl font-bold text-red-900 dark:text-red-300 mb-1">
                             Workflow Failed
@@ -317,7 +317,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
                 {workflow.errors.length > 0 && (
                   <div className="mt-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
                     <h3 className="font-semibold text-red-900 dark:text-red-300 mb-3 flex items-center gap-2">
-                      <span className="text-xl">⚠️</span>
+                      <span className="text-xl"></span>
                       Errors:
                     </h3>
                     <ul className="space-y-2">
@@ -420,7 +420,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
               {/* Live Logs */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6">
                 <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                  <span className="text-xl">📝</span>
+                  <span className="text-xl"></span>
                   Live Logs
                 </h3>
                 <div className="bg-gray-900 rounded-lg p-4 h-64 overflow-y-auto font-mono text-xs">

@@ -187,9 +187,9 @@ async function describeImage(imagePath: string, buffer: Buffer): Promise<{ descr
     const base64Image = buffer.toString("base64");
     const dataUrl = `data:image/jpeg;base64,${base64Image}`;
 
-    // Call OpenAI Vision API or similar
+    // Use Vanchin AI for image description
     // For now, return placeholder
-    // TODO: Implement actual image description using GPT-4 Vision or similar
+    // TODO: Implement actual image description using Vanchin AI
 
     return {
       description: "Image description functionality coming soon",

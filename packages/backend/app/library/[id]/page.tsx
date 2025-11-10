@@ -164,7 +164,7 @@ export default function PromptDetailPage() {
                   className="w-full mt-6"
                   size="lg"
                 >
-                  {executing ? "Executing..." : "🚀 Execute Prompt"}
+                  {executing ? "Executing..." : " Execute Prompt"}
                 </Button>
               </div>
             ) : (
@@ -176,7 +176,7 @@ export default function PromptDetailPage() {
                   className="w-full"
                   size="lg"
                 >
-                  {executing ? "Executing..." : "🚀 Execute Prompt"}
+                  {executing ? "Executing..." : " Execute Prompt"}
                 </Button>
               </div>
             )}

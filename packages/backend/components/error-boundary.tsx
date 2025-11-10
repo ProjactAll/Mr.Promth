@@ -46,7 +46,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 max-w-md w-full">
             <div className="text-center">
-              <div className="text-6xl mb-4">⚠️</div>
+              <div className="text-6xl mb-4"></div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                 Something went wrong
               </h2>

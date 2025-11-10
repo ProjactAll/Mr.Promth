@@ -110,7 +110,7 @@ const toolRegistry: Record<ToolName, ToolDefinition> = {
         if (!user) {
           return {
             name: "project_modification",
-            content: "❌ Please login first to modify projects.",
+            content: " Please login first to modify projects.",
             metadata: { error: 'unauthorized' },
             modelMessage: {
               role: "system",
@@ -130,7 +130,7 @@ const toolRegistry: Record<ToolName, ToolDefinition> = {
         if (!workflows || workflows.length === 0) {
           return {
             name: "project_modification",
-            content: "❌ No projects found. Please create a project first.",
+            content: " No projects found. Please create a project first.",
             metadata: { error: 'no_projects' },
             modelMessage: {
               role: "system",
@@ -164,7 +164,7 @@ const toolRegistry: Record<ToolName, ToolDefinition> = {
         if (!result.success) {
           return {
             name: "project_modification",
-            content: `❌ Failed to analyze modifications:\n\n${result.summary}`,
+            content: ` Failed to analyze modifications:\n\n${result.summary}`,
             metadata: { error: result.summary },
             modelMessage: {
               role: "system",
@@ -179,7 +179,7 @@ const toolRegistry: Record<ToolName, ToolDefinition> = {
         if (!applyResult.success) {
           return {
             name: "project_modification",
-            content: `❌ Failed to apply modifications:\n\n${applyResult.message}`,
+            content: ` Failed to apply modifications:\n\n${applyResult.message}`,
             metadata: { error: applyResult.message },
             modelMessage: {
               role: "system",
@@ -191,7 +191,7 @@ const toolRegistry: Record<ToolName, ToolDefinition> = {
         // Success!
         return {
           name: "project_modification",
-          content: `✅ **Project Modified Successfully!**\n\n**Project**: ${projectName}\n**Files Modified**: ${applyResult.filesModified}\n\n**Summary**: ${result.summary}\n\n**Changes**:\n${result.modifications.map(m => `- ${m.action.toUpperCase()}: ${m.path}\n  ${m.reason}`).join('\n')}\n\nYou can view your updated project at /editor/${projectId}`,
+          content: ` **Project Modified Successfully!**\n\n**Project**: ${projectName}\n**Files Modified**: ${applyResult.filesModified}\n\n**Summary**: ${result.summary}\n\n**Changes**:\n${result.modifications.map(m => `- ${m.action.toUpperCase()}: ${m.path}\n  ${m.reason}`).join('\n')}\n\nYou can view your updated project at /editor/${projectId}`,
           metadata: {
             projectId,
             filesModified: applyResult.filesModified,
@@ -206,7 +206,7 @@ const toolRegistry: Record<ToolName, ToolDefinition> = {
         console.error('Error in project_modification:', error);
         return {
           name: "project_modification",
-          content: `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          content: ` Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
           metadata: { error: String(error) },
           modelMessage: {
             role: "system",
@@ -273,7 +273,7 @@ const toolRegistry: Record<ToolName, ToolDefinition> = {
         
         return {
           name: "project_generation",
-          content: `✅ Project created successfully!\n\n**Project**: ${projectName}\n**Workflow ID**: ${result.id}\n**Status**: ${result.status}\n\nYou can view the progress at /generate/${result.id}`,
+          content: ` Project created successfully!\n\n**Project**: ${projectName}\n**Workflow ID**: ${result.id}\n**Status**: ${result.status}\n\nYou can view the progress at /generate/${result.id}`,
           metadata: {
             projectName,
             workflowId: result.id,
@@ -363,12 +363,12 @@ function getGatewayUrl() {
   return url.replace(/\/$/, "");
 }
 
-function normalizeProvider(provider?: string): "openai" | "anthropic" {
-  const value = (provider ?? "openai").toLowerCase();
+function normalizeProvider(provider?: string): "vanchin" | "anthropic" {
+  const value = (provider ?? "vanchin").toLowerCase();
   if (["claude", "anthropic"].includes(value)) {
     return "anthropic";
   }
-  return "openai";
+  return "vanchin";
 }
 
 function encodeEvent(payload: Record<string, unknown>): Uint8Array {
@@ -534,7 +534,7 @@ async function executeTool(
   return definition.execute(invocation.input, context);
 }
 
-function extractProviderText(provider: "openai" | "anthropic", payload: any): string {
+function extractProviderText(provider: "vanchin" | "anthropic", payload: any): string {
   if (provider === "anthropic") {
     const segments = Array.isArray(payload?.content) ? payload.content : [];
     const textSegments = segments

@@ -158,7 +158,7 @@ export function CodeReviewPanel({ projectId, files }: CodeReviewPanelProps) {
             {/* Issues */}
             {result.issues.length === 0 ? (
               <div className="bg-green-500/10 border border-green-500 rounded-lg p-4 text-center">
-                <p className="text-green-400">✅ No issues found! Great job!</p>
+                <p className="text-green-400"> No issues found! Great job!</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -185,7 +185,7 @@ export function CodeReviewPanel({ projectId, files }: CodeReviewPanelProps) {
                     </div>
                     {issue.suggestion && (
                       <div className="mt-2 text-sm bg-gray-800 rounded p-2">
-                        <span className="text-green-400">💡 Suggestion:</span> {issue.suggestion}
+                        <span className="text-green-400"> Suggestion:</span> {issue.suggestion}
                       </div>
                     )}
                   </div>

@@ -37,11 +37,11 @@ export function ErrorDisplay({ error, onRetry, onDismiss }: ErrorDisplayProps) {
       case ErrorType.AI_ERROR:
         return '🤖'
       case ErrorType.VALIDATION_ERROR:
-        return '⚠️'
+        return ''
       case ErrorType.NETWORK_ERROR:
         return '🌐'
       case ErrorType.AUTH_ERROR:
-        return '🔒'
+        return ''
       case ErrorType.PERMISSION_ERROR:
         return '🚫'
       case ErrorType.RATE_LIMIT_ERROR:
@@ -49,7 +49,7 @@ export function ErrorDisplay({ error, onRetry, onDismiss }: ErrorDisplayProps) {
       case ErrorType.DATABASE_ERROR:
         return '💾'
       default:
-        return '❌'
+        return ''
     }
   }
 

@@ -150,7 +150,7 @@ export function TerminalChatWrapper({
 
       {/* Footer */}
       <div className="px-4 py-2 bg-gray-900 border-t border-green-900/30 text-xs text-gray-600">
-        <p>💡 กด Enter เพื่อส่งข้อความ | ESC เพื่อล้างข้อความ</p>
+        <p> กด Enter เพื่อส่งข้อความ | ESC เพื่อล้างข้อความ</p>
       </div>
     </div>
   )

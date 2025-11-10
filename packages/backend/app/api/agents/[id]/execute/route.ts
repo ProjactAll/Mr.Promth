@@ -233,8 +233,8 @@ async function executePromptStep(step: AgentStep, context: any, request: NextReq
           content: promptText
         }
       ],
-      provider: step.config.provider || "openai",
-      model: step.config.model || "gpt-4",
+      provider: "vanchin",
+      model: step.config.model || "auto",
       stream: false
     })
   });

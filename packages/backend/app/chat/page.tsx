@@ -205,7 +205,7 @@ export default function ChatPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl font-bold text-gray-900">🚀 MR.Promth AI Chat</h1>
+          <h1 className="text-xl font-bold text-gray-900"> MR.Promth AI Chat</h1>
           <span className="px-2 py-1 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full">
             19 AI Models
           </span>
@@ -383,7 +383,7 @@ export default function ChatPage() {
               disabled={loading || uploading || (!input.trim() && files.length === 0)}
               className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {uploading ? '📤' : loading ? '⏳' : '🚀'}
+              {uploading ? '📤' : loading ? '⏳' : ''}
             </button>
           </div>
           

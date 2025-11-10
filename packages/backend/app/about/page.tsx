@@ -77,27 +77,27 @@ export default function AboutPage() {
             <div className="grid gap-8 md:grid-cols-3">
               <div className="card-modern">
                 <h3 className="text-2xl font-bold mb-4">AI Models</h3>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li>✅ 19 AI Models (GPT-4, Claude, Gemini)</li>
-                  <li>✅ 7 Specialized Agents</li>
-                  <li>✅ Vanchin AI Integration</li>
+                <ul className="space-y-2 text-muted-foreground list-disc list-inside">
+                  <li>Vanchin AI Integration (39 endpoints)</li>
+                  <li>7 Specialized Agents</li>
+                  <li>Load Balancing System</li>
                 </ul>
               </div>
               <div className="card-modern">
                 <h3 className="text-2xl font-bold mb-4">Frontend</h3>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li>✅ Next.js 14</li>
-                  <li>✅ TypeScript</li>
-                  <li>✅ Tailwind CSS</li>
-                  <li>✅ shadcn/ui</li>
+                <ul className="space-y-2 text-muted-foreground list-disc list-inside">
+                  <li>Next.js 14</li>
+                  <li>TypeScript</li>
+                  <li>Tailwind CSS</li>
+                  <li>shadcn/ui</li>
                 </ul>
               </div>
               <div className="card-modern">
                 <h3 className="text-2xl font-bold mb-4">Backend</h3>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li>✅ Next.js API Routes</li>
-                  <li>✅ Supabase (Database + Auth)</li>
-                  <li>✅ Vercel Deployment</li>
+                <ul className="space-y-2 text-muted-foreground list-disc list-inside">
+                  <li>Next.js API Routes</li>
+                  <li>Supabase (Database + Auth)</li>
+                  <li>Vercel Deployment</li>
                 </ul>
               </div>
             </div>

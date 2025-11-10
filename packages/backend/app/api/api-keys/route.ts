@@ -5,7 +5,7 @@ import { encryptSecret, hashIdentifier, maskSecret } from '@/utils/security';
 
 export const dynamic = 'force-dynamic';
 
-const ALLOWED_PROVIDERS = ['openai', 'anthropic'] as const;
+const ALLOWED_PROVIDERS = ['vanchin'] as const;
 type ProviderValue = (typeof ALLOWED_PROVIDERS)[number];
 
 const isAllowedProvider = (value: string): value is ProviderValue =>

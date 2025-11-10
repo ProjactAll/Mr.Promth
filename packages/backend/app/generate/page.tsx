@@ -53,7 +53,7 @@ export default function GeneratePage() {
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              🚀 Generate Your Project
+               Generate Your Project
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300">
               Describe your project in natural language, and our AI will generate complete code for you
@@ -104,7 +104,7 @@ export default function GeneratePage() {
               {/* Examples */}
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                 <h3 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
-                  💡 Example Prompts:
+                   Example Prompts:
                 </h3>
                 <ul className="text-sm text-blue-800 dark:text-blue-400 space-y-1">
                   <li>• "Create a task management app with drag-and-drop, user auth, and real-time updates"</li>
@@ -117,7 +117,7 @@ export default function GeneratePage() {
               {error && (
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
                   <p className="text-sm text-red-800 dark:text-red-400">
-                    ❌ {error}
+                     {error}
                   </p>
                 </div>
               )}
@@ -138,7 +138,7 @@ export default function GeneratePage() {
                   </>
                 ) : (
                   <>
-                    <span>🚀 Generate Project</span>
+                    <span> Generate Project</span>
                   </>
                 )}
               </button>
@@ -148,7 +148,7 @@ export default function GeneratePage() {
           {/* Features */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-              <div className="text-3xl mb-3">⚡</div>
+              <div className="text-3xl mb-3"></div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Fast Generation
               </h3>
@@ -158,7 +158,7 @@ export default function GeneratePage() {
             </div>
             
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-              <div className="text-3xl mb-3">🎯</div>
+              <div className="text-3xl mb-3"></div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Production Ready
               </h3>
