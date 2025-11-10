@@ -1,8 +1,13 @@
 import { callAgent, parseAgentResponse } from "@/lib/vanchin";
-
 import type { Agent1Output } from "./types";
+import { retryWithCheck } from '../utils/retry'
+import { createLogger } from '../utils/logger'
+
+const logger = createLogger({ component: 'Agent1' })
 
 export async function executeAgent1(userPrompt: string): Promise<Agent1Output> {
+  logger.info('Expanding user prompt', { length: userPrompt.length })
+  
   const prompt = `
 You are a world-class software architect. Your task is to expand a simple user prompt into a detailed project specification for a web application. The output must be a JSON object.
 
@@ -33,10 +38,22 @@ Rules:
 Respond with ONLY the JSON object, no additional text.
   `.trim();
 
-  const response = await callAgent("agent1", prompt, {
-    temperature: 0.7,
-    max_tokens: 2200,
+  // Use retry mechanism for API calls
+  const result = await retryWithCheck(async () => {
+    const response = await callAgent("agent1", prompt, {
+      temperature: 0.7,
+      max_tokens: 2200,
+    });
+    return parseAgentResponse<Agent1Output>(response);
+  }, {
+    maxAttempts: 3,
+    initialDelay: 1000
   });
-
-  return parseAgentResponse<Agent1Output>(response);
+  
+  logger.info('Prompt expanded successfully', { 
+    features: result.features?.length || 0,
+    pages: result.pages?.length || 0
+  })
+  
+  return result;
 }

@@ -1,8 +1,23 @@
 import { callAgent, parseAgentResponse } from "@/lib/vanchin";
-
 import type { Agent1Output, Agent2Output } from "./types";
+import { architectureCache } from '../cache/architecture-cache'
+import { retryWithCheck } from '../utils/retry'
+import { createLogger } from '../utils/logger'
+
+const logger = createLogger({ component: 'Agent2' })
 
 export async function executeAgent2(agent1Output: Agent1Output): Promise<Agent2Output> {
+  // Try to get from cache first
+  const cacheKey = agent1Output.features || []
+  const cached = architectureCache.get(cacheKey)
+  
+  if (cached) {
+    logger.info('Using cached architecture', { features: cacheKey.length })
+    return cached
+  }
+  
+  logger.info('Generating new architecture', { features: cacheKey.length })
+  
   const prompt = `
 You are a senior software engineer. Based on the following project specification, design the system architecture. The output must be a JSON object.
 
@@ -42,10 +57,21 @@ Rules:
 Respond with ONLY the JSON object, no additional text.
   `.trim();
 
-  const response = await callAgent("agent2", prompt, {
-    temperature: 0.6,
-    max_tokens: 2600,
+  // Use retry mechanism for API calls
+  const result = await retryWithCheck(async () => {
+    const response = await callAgent("agent2", prompt, {
+      temperature: 0.6,
+      max_tokens: 2600,
+    });
+    return parseAgentResponse<Agent2Output>(response);
+  }, {
+    maxAttempts: 3,
+    initialDelay: 1000
   });
-
-  return parseAgentResponse<Agent2Output>(response);
+  
+  // Cache the result
+  architectureCache.set(cacheKey, result)
+  logger.info('Cached new architecture')
+  
+  return result;
 }
