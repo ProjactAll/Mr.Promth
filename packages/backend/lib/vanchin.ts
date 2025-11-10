@@ -4,14 +4,26 @@ import type { ChatCompletion } from "openai/resources/chat/completions";
 const VANCHIN_BASE_URL =
   process.env.VANCHIN_BASE_URL ?? "https://vanchin.streamlake.ai/api/gateway/v1/endpoints";
 
+// Agent to API Key/Endpoint mapping
+// Agent 1-7 use pairs 1-7
+export const AGENT_TO_KEY_MAP = {
+  agent1: 1,
+  agent2: 2,
+  agent3: 3,
+  agent4: 4,
+  agent5: 5,
+  agent6: 6,
+  agent7: 7,
+} as const;
+
 export const AGENT_ENDPOINTS = {
-  agent1: "ep-lpvcnv-1761467347624133479",
-  agent2: "ep-j9pysc-1761467653839114083",
-  agent3: "ep-2uyob4-1761467835762653881",
-  agent4: "ep-nqjal5-1762460264139958733",
-  agent5: "ep-mhsvw6-1762460362477023705",
-  agent6: "ep-h614n9-1762460436283699679",
-  agent7: "ep-ohxawl-1762460514611065743",
+  agent1: process.env.VANCHIN_ENDPOINT_1 ?? "ep-lpvcnv-1761467347624133479",
+  agent2: process.env.VANCHIN_ENDPOINT_2 ?? "ep-j9pysc-1761467653839114083",
+  agent3: process.env.VANCHIN_ENDPOINT_3 ?? "ep-2uyob4-1761467835762653881",
+  agent4: process.env.VANCHIN_ENDPOINT_4 ?? "ep-nqjal5-1762460264139958733",
+  agent5: process.env.VANCHIN_ENDPOINT_5 ?? "ep-mhsvw6-1762460362477023705",
+  agent6: process.env.VANCHIN_ENDPOINT_6 ?? "ep-h614n9-1762460436283699679",
+  agent7: process.env.VANCHIN_ENDPOINT_7 ?? "ep-ohxawl-1762460514611065743",
 } as const;
 
 type AgentIdentifier = keyof typeof AGENT_ENDPOINTS;
@@ -24,13 +36,22 @@ export class MissingVanchinConfigurationError extends Error {
 }
 
 export async function getAgentApiKey(agentId: AgentIdentifier): Promise<string> {
-  const envKey = process.env[`VANCHIN_AGENT_${agentId.toUpperCase()}_KEY`];
-  if (!envKey) {
-    throw new MissingVanchinConfigurationError(
-      `VanchinAI API key missing for ${agentId}. Please set VANCHIN_AGENT_${agentId.toUpperCase()}_KEY.`,
-    );
+  // Try new format first: VANCHIN_AGENT_AGENT1_KEY
+  const newFormatKey = process.env[`VANCHIN_AGENT_${agentId.toUpperCase()}_KEY`];
+  if (newFormatKey) {
+    return newFormatKey;
   }
-  return envKey;
+  
+  // Try old format: VANCHIN_API_KEY_1
+  const keyNumber = AGENT_TO_KEY_MAP[agentId];
+  const oldFormatKey = process.env[`VANCHIN_API_KEY_${keyNumber}`];
+  if (oldFormatKey) {
+    return oldFormatKey;
+  }
+  
+  throw new MissingVanchinConfigurationError(
+    `VanchinAI API key missing for ${agentId}. Please set VANCHIN_AGENT_${agentId.toUpperCase()}_KEY or VANCHIN_API_KEY_${keyNumber}.`,
+  );
 }
 
 export function createVanchinClient(apiKey: string) {
