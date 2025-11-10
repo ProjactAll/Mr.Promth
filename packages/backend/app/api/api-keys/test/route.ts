@@ -17,7 +17,7 @@ class ProviderTestError extends Error {
   }
 }
 
-async function verifyVanchin AI(key: string): Promise<string> {
+async function verifyVanchin(key: string): Promise<string> {
   const response = await fetch('https://api.openai.com/v1/models', {
     headers: {
       Authorization: `Bearer ${key}`,
@@ -51,8 +51,8 @@ async function verifyAnthropic(key: string): Promise<string> {
 async function verifyProvider(provider: string, key: string): Promise<string> {
   const normalized = provider.toLowerCase();
   switch (normalized) {
-    case 'openai':
-      return await verifyVanchin AI(key);
+    case 'vanchin':
+      return await verifyVanchin(key);
     case 'anthropic':
       return await verifyAnthropic(key);
     default:
