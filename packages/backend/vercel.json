@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "buildCommand": "pnpm build",
+  "devCommand": "pnpm dev",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "regions": ["sin1"],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@supabase-url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase-anon-key"
+  },
+  "build": {
+    "env": {
+      "SUPABASE_SERVICE_ROLE_KEY": "@supabase-service-role-key",
+      "VANCHIN_BASE_URL": "@vanchin-base-url",
+      "VANCHIN_AGENT_AGENT1_KEY": "@vanchin-agent1-key",
+      "VANCHIN_AGENT_AGENT2_KEY": "@vanchin-agent2-key",
+      "VANCHIN_AGENT_AGENT3_KEY": "@vanchin-agent3-key",
+      "VANCHIN_AGENT_AGENT4_KEY": "@vanchin-agent4-key",
+      "VANCHIN_AGENT_AGENT5_KEY": "@vanchin-agent5-key",
+      "VANCHIN_AGENT_AGENT6_KEY": "@vanchin-agent6-key",
+      "VANCHIN_AGENT_AGENT7_KEY": "@vanchin-agent7-key"
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    }
+  ]
+}
