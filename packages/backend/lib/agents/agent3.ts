@@ -126,13 +126,14 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
     let validColumnsAdded = false
     if (typeof table === 'object' && table.columns && Array.isArray(table.columns)) {
       for (const column of table.columns) {
+        const col = column as any
         // Skip if column name or type is missing
-        if (!column.name || !column.type || typeof column.name !== 'string' || typeof column.type !== 'string') {
+        if (!col.name || !col.type || typeof col.name !== 'string' || typeof col.type !== 'string') {
           continue
         }
-        const nullable = column.nullable ? '' : ' NOT NULL'
-        const defaultValue = column.default ? ` DEFAULT ${column.default}` : ''
-        sql += `  ${column.name} ${column.type}${nullable}${defaultValue},\n`
+        const nullable = col.nullable ? '' : ' NOT NULL'
+        const defaultValue = col.default ? ` DEFAULT ${col.default}` : ''
+        sql += `  ${col.name} ${col.type}${nullable}${defaultValue},\n`
         validColumnsAdded = true
       }
     }
@@ -209,7 +210,8 @@ async function generateAPIRoutes(architecture: Agent2Output) {
   const resourceMap = new Map<string, typeof endpoints>()
   
   for (const endpoint of endpoints) {
-    const path = typeof endpoint === 'string' ? endpoint : endpoint.path
+    const ep = endpoint as any
+    const path = typeof endpoint === 'string' ? endpoint : ep.path
     const resource = path.split('/')[1] || 'default'
     
     if (!resourceMap.has(resource)) {
@@ -224,7 +226,8 @@ async function generateAPIRoutes(architecture: Agent2Output) {
     
     // Determine operations from endpoints
     for (const endpoint of resourceEndpoints) {
-      const method = typeof endpoint === 'object' ? endpoint.method : 'GET'
+      const ep = endpoint as any
+      const method = typeof endpoint === 'object' ? ep.method : 'GET'
       
       if (method === 'GET') operations.push('read')
       if (method === 'POST') operations.push('create')
@@ -373,11 +376,12 @@ async function generateValidationSchemas(architecture: Agent2Output) {
     // Add custom columns if available
     if (typeof table === 'object' && table.columns) {
       for (const column of table.columns) {
-        const columnType = column.type || 'string'
-        schema[column.name] = {
+        const col = column as any
+        const columnType = col.type || 'string'
+        schema[col.name] = {
           type: columnType.toLowerCase().includes('int') ? 'number' : 
                 columnType.toLowerCase().includes('bool') ? 'boolean' : 'string',
-          required: !column.nullable
+          required: !col.nullable
         }
       }
     }

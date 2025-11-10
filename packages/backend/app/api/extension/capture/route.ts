@@ -8,7 +8,10 @@ import {
   getUserScreenshots,
   getSessionScreenshots,
 } from '@/lib/database'
+
 import { NextResponse } from 'next/server'
+
+const logger = createLogger({ module: 'capture-route' });
 
 /**
  * POST /api/extension/capture

@@ -75,11 +75,13 @@ Respond ONLY with valid JSON, no additional text.`;
     ]);
 
     // Parse AI response
-    let content = '';
+        let content = '';
     
-    if ('choices' in response && response.choices && response.choices[0]) {
-      content = response.choices[0].message?.content || '';
-    } else if ('content' in response) {
+    if (typeof response === 'string') {
+      content = response;
+    } else if (typeof response === 'object' && response !== null && 'choices' in response) {
+      content = (response as any).choices[0]?.message?.content || '';
+    } else if (typeof response === 'object' && response !== null && 'content' in response) {
       content = (response as any).content || '';
     }
     

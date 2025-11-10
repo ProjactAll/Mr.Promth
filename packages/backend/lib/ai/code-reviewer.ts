@@ -91,12 +91,14 @@ Respond ONLY with valid JSON, no additional text.`;
       { role: 'user', content: prompt },
     ]);
 
-    // Parse AI response
+    // Parse AI response (vanchinChatCompletion returns string)
     let content = '';
     
-    if ('choices' in response && response.choices && response.choices[0]) {
-      content = response.choices[0].message?.content || '';
-    } else if ('content' in response) {
+    if (typeof response === 'string') {
+      content = response;
+    } else if (typeof response === 'object' && response !== null && 'choices' in response) {
+      content = (response as any).choices[0]?.message?.content || '';
+    } else if (typeof response === 'object' && response !== null && 'content' in response) {
       content = (response as any).content || '';
     }
     

@@ -11,6 +11,8 @@ const execAsync = promisify(exec);
 
 export const dynamic = "force-dynamic";
 
+const logger = createLogger({ module: 'pdf-route' });
+
 // POST /api/tools/pdf - Process PDF files
 export async function POST(request: NextRequest) {
   try {

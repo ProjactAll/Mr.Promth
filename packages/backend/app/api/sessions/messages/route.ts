@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const message = await saveMessage(body.session_id, body.role, body.content, body.provider_message_id);
+    const message = await saveMessage(body.session_id, body.role, body.content);
     return NextResponse.json(message, { status: 201 });
   } catch (error) {
     console.error('Save message error:', error);

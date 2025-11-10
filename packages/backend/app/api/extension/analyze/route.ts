@@ -6,9 +6,12 @@ import {
   createAnalysisResult,
   getAnalysisResults,
 } from '@/lib/database'
+
 import { NextResponse } from 'next/server'
 import { executeAgent1 } from '@/lib/agents/agent1'
 import { executeAgent2 } from '@/lib/agents/agent2'
+
+const logger = createLogger({ module: 'analyze-route' });
 
 /**
  * POST /api/extension/analyze

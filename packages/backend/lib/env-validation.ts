@@ -55,7 +55,7 @@ export function validateEnv(): EnvConfig {
     )
   }
 
-  return process.env as EnvConfig
+  return process.env as unknown as EnvConfig
 }
 
 /**

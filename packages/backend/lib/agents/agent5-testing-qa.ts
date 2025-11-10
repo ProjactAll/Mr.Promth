@@ -183,15 +183,15 @@ Generate ONLY the test code, no explanations.`
     }
   ], {
     temperature: 0.3,
-    maxTokens: 2000
+    max_tokens: 2000
   })
   
-  // Type guard to ensure we have a ChatCompletion response
-  if (!response || typeof response === 'object' && 'choices' in response === false) {
+  // Response is already a string from vanchinChatCompletion
+  if (!response || typeof response !== 'string') {
     throw new Error('Invalid response from AI')
   }
   
-  let testCode = response.choices[0].message.content || ''
+  let testCode = response
   
   // Extract code from markdown if present
   const codeMatch = testCode.match(/```(?:typescript|javascript|ts|js)?\n([\s\S]*?)\n```/)

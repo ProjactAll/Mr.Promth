@@ -18,6 +18,11 @@ import type {
   Agent2Output,
   AgentChainResultPayload,
 } from "./types";
+import type { Agent3Output } from "./agent3-improved";
+import type { Agent4Result } from "./agent4-frontend-generator";
+import type { Agent5Result } from "./agent5-testing-qa";
+import type { Agent6Result } from "./agent6-deployment";
+import type { Agent7Result } from "./agent7-monitoring";
 
 export type AgentStatus = "pending" | "running" | "completed" | "error";
 
@@ -36,11 +41,11 @@ export type AgentChainResult = AgentChainResultPayload;
 interface AgentOutputs {
   agent1_output?: Agent1Output;
   agent2_output?: Agent2Output;
-  agent3_output?: unknown;
-  agent4_output?: unknown;
-  agent5_output?: unknown;
-  agent6_output?: unknown;
-  agent7_output?: unknown;
+  agent3_output?: Agent3Output;
+  agent4_output?: Agent4Result;
+  agent5_output?: Agent5Result;
+  agent6_output?: Agent6Result;
+  agent7_output?: Agent7Result;
 }
 
 interface AgentExecutionContext {
@@ -217,7 +222,7 @@ export class AgentChainOrchestrator {
       while (attempt <= this.maxRetries) {
         attempt += 1;
         try {
-          let output = await definition.run!({ userPrompt, outputs });
+          let output: unknown = await definition.run!({ userPrompt, outputs });
           
           // Agent Group Discussion
           if (this.enableAgentDiscussion && definition.number > 1) {

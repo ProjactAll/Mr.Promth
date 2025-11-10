@@ -125,9 +125,14 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
     // Add custom columns if available
     if (typeof table === 'object' && table.columns) {
       for (const column of table.columns) {
-        const nullable = column.nullable ? '' : ' NOT NULL'
-        const defaultValue = column.default ? ` DEFAULT ${column.default}` : ''
-        sql += `  ${column.name} ${column.type}${nullable}${defaultValue},\n`
+        if (typeof column === 'object' && column !== null) {
+          const col = column as any
+          if (col.name && col.type) {
+            const nullable = col.nullable ? '' : ' NOT NULL'
+            const defaultValue = col.default ? ` DEFAULT ${col.default}` : ''
+            sql += `  ${col.name} ${col.type}${nullable}${defaultValue},\n`
+          }
+        }
       }
     }
     
@@ -182,7 +187,7 @@ async function generateAPIRoutes(architecture: Agent2Output) {
   const resourceMap = new Map<string, typeof endpoints>()
   
   for (const endpoint of endpoints) {
-    const path = typeof endpoint === 'string' ? endpoint : endpoint.path
+    const path = typeof endpoint === 'string' ? endpoint : (endpoint as any).path
     const resource = path.split('/')[1] || 'default'
     
     if (!resourceMap.has(resource)) {
@@ -197,7 +202,7 @@ async function generateAPIRoutes(architecture: Agent2Output) {
     
     // Determine operations from endpoints
     for (const endpoint of resourceEndpoints) {
-      const method = typeof endpoint === 'object' ? endpoint.method : 'GET'
+      const method = typeof endpoint === 'object' ? (endpoint as any).method : 'GET'
       
       if (method === 'GET') operations.push('read')
       if (method === 'POST') operations.push('create')
@@ -346,10 +351,15 @@ async function generateValidationSchemas(architecture: Agent2Output) {
     // Add custom columns if available
     if (typeof table === 'object' && table.columns) {
       for (const column of table.columns) {
-        schema[column.name] = {
-          type: column.type.includes('int') ? 'number' : 
-                column.type.includes('bool') ? 'boolean' : 'string',
-          required: !column.nullable
+        if (typeof column === 'object' && column !== null) {
+          const col = column as any
+          if (col.name && col.type) {
+            schema[col.name] = {
+              type: col.type.includes('int') ? 'number' : 
+                    col.type.includes('bool') ? 'boolean' : 'string',
+              required: !col.nullable
+            }
+          }
         }
       }
     }

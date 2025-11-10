@@ -153,7 +153,7 @@ export class VanchinClient {
     try {
       const response = await instance.client.chat.completions.create({
         model: instance.modelId, // IMPORTANT: endpoint_id goes here
-        messages,
+        messages: messages as any,
         temperature: options.temperature ?? 0.7,
         max_tokens: options.max_tokens,
       })

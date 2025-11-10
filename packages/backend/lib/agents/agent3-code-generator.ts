@@ -9,7 +9,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 
 // Create logger instance
-const logger = createLogger('agent3-code-generator')
+const logger = createLogger({ module: 'agent3-code-generator' })
 
 export interface Agent3Request {
   projectId: string

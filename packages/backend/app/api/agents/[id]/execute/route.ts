@@ -1,9 +1,12 @@
-import { createLogger } from '@/lib/utils/logger'
+import { createLogger } from '@/lib/utils/logger';
+import { readFileFromStorage, writeFileToStorage, deleteFileFromStorage, STORAGE_BUCKETS } from '@/lib/storage';
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
+
+const logger = createLogger({ module: 'agents-execute' });
 
 interface AgentStep {
   id: string;
@@ -310,7 +313,7 @@ async function executeWebSearch(params: any): Promise<{ results: any[] }> {
     );
     
     if (!response.ok) {
-      logger.error('Web search failed:', response.statusText instanceof Error ? response.statusText : new Error(String(response.statusText)));
+      logger.error('Web search failed:', new Error(response.statusText));
       return { results: [] };
     }
 
@@ -423,22 +426,38 @@ async function processFile(params: any): Promise<{ processed: boolean; result?: 
         if (!filePath) {
           return { processed: false, error: 'File path required for read action' };
         }
-        // TODO: Implement actual file reading from Supabase Storage
-        return { 
-          processed: true, 
-          result: { content: 'File content here', path: filePath } 
-        };
+        // อ่านไฟล์จาก Supabase Storage
+        try {
+          const content = await readFileFromStorage(STORAGE_BUCKETS.PROJECT_FILES, filePath);
+          return { 
+            processed: true, 
+            result: { content, path: filePath } 
+          };
+        } catch (error) {
+          return { 
+            processed: false, 
+            error: error instanceof Error ? error.message : 'Failed to read file' 
+          };
+        }
         
       case 'write':
         // เขียนไฟล์ไป storage
         if (!filePath || !content) {
           return { processed: false, error: 'File path and content required for write action' };
         }
-        // TODO: Implement actual file writing to Supabase Storage
-        return { 
-          processed: true, 
-          result: { path: filePath, size: content.length } 
-        };
+        // เขียนไฟล์ไป Supabase Storage
+        try {
+          await writeFileToStorage(STORAGE_BUCKETS.PROJECT_FILES, filePath, content);
+          return { 
+            processed: true, 
+            result: { path: filePath, size: content.length } 
+          };
+        } catch (error) {
+          return { 
+            processed: false, 
+            error: error instanceof Error ? error.message : 'Failed to write file' 
+          };
+        }
         
       case 'parse':
         // Parse ไฟล์ (JSON, CSV, etc.)
@@ -477,8 +496,16 @@ async function processFile(params: any): Promise<{ processed: boolean; result?: 
         if (!filePath) {
           return { processed: false, error: 'File path required for delete action' };
         }
-        // TODO: Implement actual file deletion from Supabase Storage
-        return { processed: true, result: { deleted: filePath } };
+        // ลบไฟล์จาก Supabase Storage
+        try {
+          await deleteFileFromStorage(STORAGE_BUCKETS.PROJECT_FILES, filePath);
+          return { processed: true, result: { deleted: filePath } };
+        } catch (error) {
+          return { 
+            processed: false, 
+            error: error instanceof Error ? error.message : 'Failed to delete file' 
+          };
+        }
         
       default:
         return { processed: false, error: `Unknown action: ${action}` };

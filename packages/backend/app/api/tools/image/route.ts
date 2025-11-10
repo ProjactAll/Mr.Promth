@@ -7,6 +7,8 @@ import { join } from "path";
 
 export const dynamic = "force-dynamic";
 
+const logger = createLogger({ module: 'image-route' });
+
 // POST /api/tools/image - Process images
 export async function POST(request: NextRequest) {
   try {

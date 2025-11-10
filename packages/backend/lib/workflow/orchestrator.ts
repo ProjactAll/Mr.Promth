@@ -222,7 +222,7 @@ Respond in JSON format.`
       [{ role: 'user', content: analysisPrompt }],
       {
         temperature: 0.3,
-        maxTokens: 1000
+        max_tokens: 1000
       }
     )
     
@@ -230,8 +230,8 @@ Respond in JSON format.`
     let response = ''
     if (typeof completion === 'string') {
       response = completion
-    } else if ('choices' in completion && completion.choices) {
-      response = completion.choices[0]?.message?.content || ''
+    } else if (typeof completion === 'object' && completion !== null && 'choices' in completion) {
+      response = (completion as any).choices[0]?.message?.content || ''
     } else {
       // Handle stream or other types
       response = String(completion)
@@ -294,7 +294,7 @@ Respond in JSON format.`
       [{ role: 'user', content: expansionPrompt }],
       {
         temperature: 0.4,
-        maxTokens: 2000
+        max_tokens: 2000
       }
     )
     
@@ -302,8 +302,8 @@ Respond in JSON format.`
     let response2 = ''
     if (typeof completion2 === 'string') {
       response2 = completion2
-    } else if ('choices' in completion2 && completion2.choices) {
-      response2 = completion2.choices[0]?.message?.content || ''
+    } else if (typeof completion2 === 'object' && completion2 !== null && 'choices' in completion2) {
+      response2 = (completion2 as any).choices[0]?.message?.content || ''
     } else {
       response2 = String(completion2)
     }

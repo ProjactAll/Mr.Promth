@@ -55,7 +55,7 @@ export async function retry<T>(
 
       // Check if this was the last attempt
       if (attempt === opts.maxAttempts) {
-        logger.error(`All ${opts.maxAttempts} attempts failed`, { error: lastError.message })
+        logger.error(`All ${opts.maxAttempts} attempts failed`, lastError, { error: lastError.message })
         throw lastError
       }
 

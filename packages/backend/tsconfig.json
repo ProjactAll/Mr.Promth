@@ -25,10 +25,18 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"],
-      "@/utils/*": ["./utils/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@/utils/*": [
+        "./utils/*"
+      ]
     },
     "plugins": [
       {
@@ -44,6 +52,8 @@
   ],
   "exclude": [
     "node_modules",
-    "cli_backup"
+    "cli_backup",
+    "scripts",
+    "scripts/**/*"
   ]
 }

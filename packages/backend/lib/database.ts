@@ -360,3 +360,74 @@ export async function updateUserProfile(
   if (error) throw error
   return data
 }
+
+// ============================================================================
+// Chat Sessions (for backward compatibility with old API routes)
+// ============================================================================
+
+export async function getChatSessions(userId: string) {
+  const supabase = createServiceClient()
+  
+  const { data, error } = await supabase
+    .from('extension_sessions')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data
+}
+
+export async function createChatSession(userId: string, title: string, metadata?: any) {
+  const supabase = createServiceClient()
+  
+  const { data, error } = await supabase
+    .from('extension_sessions')
+    .insert({
+      user_id: userId,
+      browser_info: metadata || {},
+    })
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export async function getMessages(sessionId: string) {
+  const supabase = createServiceClient()
+  
+  // Note: messages table doesn't exist in current schema
+  // This is a placeholder that returns empty array
+  // TODO: Add messages table or use extension_logs
+  return []
+}
+
+export async function saveMessage(
+  sessionId: string,
+  sender: 'user' | 'assistant' | 'system',
+  content: string
+) {
+  const supabase = createServiceClient()
+  
+  // Note: messages table doesn't exist in current schema
+  // This is a placeholder that logs to extension_logs
+  // TODO: Add messages table or modify schema
+  
+  const { data: session } = await supabase
+    .from('extension_sessions')
+    .select('user_id')
+    .eq('id', sessionId)
+    .single()
+  
+  if (session) {
+    await createExtensionLog(
+      session.user_id,
+      'info',
+      `${sender}: ${content}`,
+      { session_id: sessionId, sender }
+    )
+  }
+  
+  return { id: Date.now().toString(), session_id: sessionId, sender, content }
+}
