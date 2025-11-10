@@ -2,8 +2,17 @@ import { performance } from "node:perf_hooks";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { createLogger } from "../utils/logger";
+
 import { executeAgent1 } from "./agent1";
 import { executeAgent2 } from "./agent2";
+import { executeAgent3 } from "./agent3";
+import {
+  executeAgent4Wrapper,
+  executeAgent5Wrapper,
+  executeAgent6Wrapper,
+  executeAgent7Wrapper,
+} from "./agent-wrappers";
 import type {
   Agent1Output,
   Agent2Output,
@@ -68,26 +77,87 @@ const AGENTS: AgentDefinition[] = [
     number: 3,
     name: "Database & Backend Developer",
     key: "agent3_output",
+    run: async ({ outputs }) => {
+      if (!outputs.agent2_output) {
+        throw new Error("Agent 3 requires Agent 2 output but none was found");
+      }
+      return executeAgent3(outputs.agent2_output);
+    },
   },
   {
     number: 4,
     name: "Frontend Component Developer",
     key: "agent4_output",
+    run: async ({ outputs, userPrompt }) => {
+      if (!outputs.agent1_output || !outputs.agent2_output || !outputs.agent3_output) {
+        throw new Error("Agent 4 requires outputs from agents 1, 2, and 3");
+      }
+      // ใช้ userPrompt เป็น projectId ชั่วคราว (ในระบบจริงควรใช้ projectId จริง)
+      const projectId = Date.now().toString();
+      return executeAgent4Wrapper(
+        outputs.agent1_output,
+        outputs.agent2_output,
+        outputs.agent3_output,
+        projectId
+      );
+    },
   },
   {
     number: 5,
-    name: "Integration & Logic Developer",
+    name: "Testing & Quality Assurance",
     key: "agent5_output",
+    run: async ({ outputs }) => {
+      if (!outputs.agent1_output || !outputs.agent2_output || !outputs.agent3_output || !outputs.agent4_output) {
+        throw new Error("Agent 5 requires outputs from agents 1-4");
+      }
+      const projectId = Date.now().toString();
+      return executeAgent5Wrapper(
+        outputs.agent1_output,
+        outputs.agent2_output,
+        outputs.agent3_output,
+        outputs.agent4_output,
+        projectId
+      );
+    },
   },
   {
     number: 6,
-    name: "Testing & Quality Assurance",
+    name: "Deployment",
     key: "agent6_output",
+    run: async ({ outputs }) => {
+      if (!outputs.agent1_output || !outputs.agent2_output || !outputs.agent3_output || !outputs.agent4_output || !outputs.agent5_output) {
+        throw new Error("Agent 6 requires outputs from agents 1-5");
+      }
+      const projectId = Date.now().toString();
+      return executeAgent6Wrapper(
+        outputs.agent1_output,
+        outputs.agent2_output,
+        outputs.agent3_output,
+        outputs.agent4_output,
+        outputs.agent5_output,
+        projectId
+      );
+    },
   },
   {
     number: 7,
-    name: "Optimization & Deployment",
+    name: "Monitoring & Analytics",
     key: "agent7_output",
+    run: async ({ outputs }) => {
+      if (!outputs.agent1_output || !outputs.agent2_output || !outputs.agent3_output || !outputs.agent4_output || !outputs.agent5_output || !outputs.agent6_output) {
+        throw new Error("Agent 7 requires outputs from agents 1-6");
+      }
+      const projectId = Date.now().toString();
+      return executeAgent7Wrapper(
+        outputs.agent1_output,
+        outputs.agent2_output,
+        outputs.agent3_output,
+        outputs.agent4_output,
+        outputs.agent5_output,
+        outputs.agent6_output,
+        projectId
+      );
+    },
   },
 ];
 
@@ -324,7 +394,8 @@ export class AgentChainOrchestrator {
     output: unknown,
     previousOutputs: AgentOutputs
   ): Promise<unknown> {
-    console.log(`[Agent Discussion] Starting review for Agent ${currentAgent.number}`);
+    const logger = createLogger({ component: 'AgentDiscussion', agentNumber: currentAgent.number });
+    logger.info('Starting peer review');
     
     // กำหนด review criteria ตาม agent type
     const reviewCriteria = this.getReviewCriteria(currentAgent.number);
@@ -354,7 +425,7 @@ export class AgentChainOrchestrator {
     
     // ถ้าพบ issues ให้ log และ feedback
     if (issues.length > 0) {
-      console.log(`[Agent Discussion] Found ${issues.length} issues:`, issues);
+      logger.warn('Peer review found issues', { issueCount: issues.length, issues });
       
       await this.insertAgentLog({
         agentNumber: currentAgent.number,
@@ -364,7 +435,7 @@ export class AgentChainOrchestrator {
         output: { review_issues: issues, status: 'needs_improvement' },
       });
     } else {
-      console.log(`[Agent Discussion] Agent ${currentAgent.number} output approved by peers`);
+      logger.info('Peer review approved');
       
       await this.insertAgentLog({
         agentNumber: currentAgent.number,
@@ -405,14 +476,14 @@ export class AgentChainOrchestrator {
   ): Promise<void> {
     const errorMessage = error instanceof Error ? error.message : String(error);
     
-    console.log(`[Self-Healing] Attempting to fix error in Agent ${agent.number}, attempt ${attempt}`);
-    console.log(`[Self-Healing] Error: ${errorMessage}`);
+    const logger = createLogger({ component: 'SelfHealing', agentNumber: agent.number, attempt });
+    logger.warn('Attempting to fix error', { errorMessage });
     
     // วิเคราะห์ประเภท error
     const errorType = this.classifyError(errorMessage);
     const healingStrategy = this.getHealingStrategy(errorType, attempt);
     
-    console.log(`[Self-Healing] Error type: ${errorType}, Strategy: ${healingStrategy.name}`);
+    logger.info('Applying healing strategy', { errorType, strategy: healingStrategy.name });
     
     // Log self-healing attempt
     await this.insertAgentLog({
@@ -430,12 +501,12 @@ export class AgentChainOrchestrator {
     
     // รอ delay ตาม strategy (exponential backoff)
     if (healingStrategy.waitTime > 0) {
-      console.log(`[Self-Healing] Waiting ${healingStrategy.waitTime}ms before retry...`);
+      logger.debug('Waiting before retry', { waitTimeMs: healingStrategy.waitTime });
       await new Promise(resolve => setTimeout(resolve, healingStrategy.waitTime));
     }
     
     // บันทึกการแก้ไขที่ทำ
-    console.log(`[Self-Healing] Applied fixes: ${healingStrategy.actions.join(', ')}`);
+    logger.info('Applied healing actions', { actions: healingStrategy.actions });
   }
   
   /**

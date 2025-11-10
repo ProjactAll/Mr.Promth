@@ -8,6 +8,7 @@
  * - ตั้งค่า RLS policies
  */
 
+import { createLogger } from '../utils/logger'
 import type { Agent2Output } from './types'
 
 export interface DatabaseTable {
@@ -72,7 +73,8 @@ export interface Agent3Output {
 export async function executeAgent3(
   architecture: Agent2Output
 ): Promise<Agent3Output> {
-  console.log('[Agent 3] Starting Database & Backend Development...')
+  const logger = createLogger({ component: 'Agent3' });
+  logger.info('Starting Database & Backend Development');
   
   try {
     // 1. วิเคราะห์และสร้าง database migrations
@@ -90,7 +92,7 @@ export async function executeAgent3(
     // 5. สร้าง validation schemas
     const validationSchemas = await generateValidationSchemas(architecture)
     
-    console.log('[Agent 3] Database & Backend Development completed successfully')
+    logger.info('Database & Backend Development completed successfully');
     
     return {
       migrations,
@@ -100,8 +102,8 @@ export async function executeAgent3(
       validation_schemas: validationSchemas
     }
   } catch (error) {
-    console.error('[Agent 3] Error:', error)
-    throw new Error(`Agent 3 failed: ${error instanceof Error ? error.message : String(error)}`)
+    logger.error('Agent 3 failed', error instanceof Error ? error : new Error(String(error)));
+    throw new Error(`Agent 3 failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 

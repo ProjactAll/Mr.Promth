@@ -296,17 +296,196 @@ function evaluateCondition(condition: string, context: any): boolean {
   }
 }
 
-async function executeWebSearch(params: any) {
-  // TODO: Implement web search
-  return { results: [] };
+async function executeWebSearch(params: any): Promise<{ results: any[] }> {
+  try {
+    const query = params.query || params.q || '';
+    if (!query) {
+      return { results: [] };
+    }
+
+    // ใช้ DuckDuckGo API (ไม่ต้อง API key)
+    const response = await fetch(
+      `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`
+    );
+    
+    if (!response.ok) {
+      console.error('Web search failed:', response.statusText);
+      return { results: [] };
+    }
+
+    const data = await response.json();
+    
+    // แปลง DuckDuckGo results เป็น format ที่ใช้งานง่าย
+    const results = [
+      ...(data.RelatedTopics || []).slice(0, 5).map((topic: any) => ({
+        title: topic.Text || '',
+        url: topic.FirstURL || '',
+        snippet: topic.Text || ''
+      }))
+    ].filter(r => r.title && r.url);
+
+    return { results };
+  } catch (error) {
+    console.error('Error in web search:', error);
+    return { results: [] };
+  }
 }
 
-async function executeCode(params: any) {
-  // TODO: Implement code execution
-  return { output: "" };
+async function executeCode(params: any): Promise<{ output: string; error?: string }> {
+  try {
+    const code = params.code || '';
+    const language = params.language || 'javascript';
+    
+    if (!code) {
+      return { output: '', error: 'No code provided' };
+    }
+
+    // รองรับเฉพาะ JavaScript/TypeScript เท่านั้น
+    if (language === 'javascript' || language === 'typescript') {
+      // สร้าง sandbox ด้วย VM2 หรือ isolated-vm
+      // สำหรับ demo ใช้ Function constructor แบบจำกัด
+      
+      // จำกัด dangerous operations
+      const dangerousPatterns = [
+        /require\s*\(/,
+        /import\s+/,
+        /eval\s*\(/,
+        /Function\s*\(/,
+        /process\./,
+        /child_process/,
+        /fs\./,
+        /__dirname/,
+        /__filename/,
+      ];
+      
+      for (const pattern of dangerousPatterns) {
+        if (pattern.test(code)) {
+          return { 
+            output: '', 
+            error: `Security: Code contains dangerous pattern: ${pattern}` 
+          };
+        }
+      }
+      
+      // Execute ใน limited context
+      const sandbox = {
+        console: {
+          log: (...args: any[]) => args.join(' '),
+        },
+        Math,
+        Date,
+        JSON,
+      };
+      
+      const func = new Function(...Object.keys(sandbox), `
+        'use strict';
+        let output = [];
+        const originalLog = console.log;
+        console.log = (...args) => output.push(args.join(' '));
+        try {
+          ${code}
+        } catch (e) {
+          output.push('Error: ' + e.message);
+        }
+        return output.join('\\n');
+      `);
+      
+      const output = func(...Object.values(sandbox));
+      return { output: String(output) };
+    }
+    
+    // สำหรับภาษาอื่นๆ ให้ return error
+    return { 
+      output: '', 
+      error: `Language '${language}' is not supported yet. Only JavaScript is supported.` 
+    };
+    
+  } catch (error) {
+    return { 
+      output: '', 
+      error: error instanceof Error ? error.message : String(error) 
+    };
+  }
 }
 
-async function processFile(params: any) {
-  // TODO: Implement file processing
-  return { processed: true };
+async function processFile(params: any): Promise<{ processed: boolean; result?: any; error?: string }> {
+  try {
+    const { action, filePath, content, data } = params;
+    
+    if (!action) {
+      return { processed: false, error: 'No action specified' };
+    }
+
+    switch (action) {
+      case 'read':
+        // อ่านไฟล์จาก storage หรือ database
+        if (!filePath) {
+          return { processed: false, error: 'File path required for read action' };
+        }
+        // TODO: Implement actual file reading from Supabase Storage
+        return { 
+          processed: true, 
+          result: { content: 'File content here', path: filePath } 
+        };
+        
+      case 'write':
+        // เขียนไฟล์ไป storage
+        if (!filePath || !content) {
+          return { processed: false, error: 'File path and content required for write action' };
+        }
+        // TODO: Implement actual file writing to Supabase Storage
+        return { 
+          processed: true, 
+          result: { path: filePath, size: content.length } 
+        };
+        
+      case 'parse':
+        // Parse ไฟล์ (JSON, CSV, etc.)
+        if (!content && !data) {
+          return { processed: false, error: 'Content or data required for parse action' };
+        }
+        
+        const contentToParse = content || data;
+        const fileType = params.type || 'json';
+        
+        if (fileType === 'json') {
+          try {
+            const parsed = JSON.parse(contentToParse);
+            return { processed: true, result: parsed };
+          } catch (e) {
+            return { processed: false, error: 'Invalid JSON format' };
+          }
+        } else if (fileType === 'csv') {
+          // Simple CSV parsing
+          const lines = contentToParse.split('\n');
+          const headers = lines[0].split(',');
+          const rows = lines.slice(1).map((line: string) => {
+            const values = line.split(',');
+            return headers.reduce((obj: any, header: string, index: number) => {
+              obj[header.trim()] = values[index]?.trim();
+              return obj;
+            }, {});
+          });
+          return { processed: true, result: rows };
+        }
+        
+        return { processed: false, error: `Unsupported file type: ${fileType}` };
+        
+      case 'delete':
+        // ลบไฟล์
+        if (!filePath) {
+          return { processed: false, error: 'File path required for delete action' };
+        }
+        // TODO: Implement actual file deletion from Supabase Storage
+        return { processed: true, result: { deleted: filePath } };
+        
+      default:
+        return { processed: false, error: `Unknown action: ${action}` };
+    }
+  } catch (error) {
+    return { 
+      processed: false, 
+      error: error instanceof Error ? error.message : String(error) 
+    };
+  }
 }
