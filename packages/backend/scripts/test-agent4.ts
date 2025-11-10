@@ -14,12 +14,12 @@ async function testAgent4() {
   const testProjectPath = join('/tmp', 'test-mr-prompt-frontend')
   await mkdir(testProjectPath, { recursive: true })
   
-  console.log('📁 Test project path:', testProjectPath)
+  console.log(' Test project path:', testProjectPath)
   console.log('')
   
   // Test 1: Generate Page Component
   console.log('Test 1: Generate Blog Post List Page')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   
   try {
     const result1 = await agent4GenerateFrontend({
@@ -41,8 +41,8 @@ async function testAgent4() {
       }
     })
     
-    console.log('✅ Success:', result1.success)
-    console.log('📝 Files generated:', result1.filesGenerated.length)
+    console.log(' Success:', result1.success)
+    console.log(' Files generated:', result1.filesGenerated.length)
     
     result1.filesGenerated.forEach(file => {
       console.log(`   - ${file.path}`)
@@ -50,24 +50,24 @@ async function testAgent4() {
       console.log(`     Size: ${file.content.length} characters`)
     })
     
-    console.log('📦 Dependencies:', result1.dependencies)
-    console.log('🔜 Next steps:', result1.nextSteps)
+    console.log(' Dependencies:', result1.dependencies)
+    console.log(' Next steps:', result1.nextSteps)
     
     if (result1.errors && result1.errors.length > 0) {
-      console.log('❌ Errors:', result1.errors)
+      console.log(' Errors:', result1.errors)
     }
     
   } catch (error) {
-    console.error('❌ Test 1 failed:', error)
+    console.error(' Test 1 failed:', error)
   }
   
   console.log('')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   console.log('')
   
   // Test 2: Generate Form Component
   console.log('Test 2: Generate Blog Post Form')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   
   try {
     const result2 = await agent4GenerateFrontend({
@@ -84,8 +84,8 @@ async function testAgent4() {
       }
     })
     
-    console.log('✅ Success:', result2.success)
-    console.log('📝 Files generated:', result2.filesGenerated.length)
+    console.log(' Success:', result2.success)
+    console.log(' Files generated:', result2.filesGenerated.length)
     
     result2.filesGenerated.forEach(file => {
       console.log(`   - ${file.path}`)
@@ -94,20 +94,20 @@ async function testAgent4() {
     })
     
     if (result2.errors && result2.errors.length > 0) {
-      console.log('❌ Errors:', result2.errors)
+      console.log(' Errors:', result2.errors)
     }
     
   } catch (error) {
-    console.error('❌ Test 2 failed:', error)
+    console.error(' Test 2 failed:', error)
   }
   
   console.log('')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   console.log('')
   
   // Test 3: Generate Dashboard
   console.log('Test 3: Generate Analytics Dashboard')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   
   try {
     const result3 = await agent4GenerateFrontend({
@@ -128,8 +128,8 @@ async function testAgent4() {
       }
     })
     
-    console.log('✅ Success:', result3.success)
-    console.log('📝 Files generated:', result3.filesGenerated.length)
+    console.log(' Success:', result3.success)
+    console.log(' Files generated:', result3.filesGenerated.length)
     
     result3.filesGenerated.forEach(file => {
       console.log(`   - ${file.path}`)
@@ -138,17 +138,17 @@ async function testAgent4() {
     })
     
     if (result3.errors && result3.errors.length > 0) {
-      console.log('❌ Errors:', result3.errors)
+      console.log(' Errors:', result3.errors)
     }
     
   } catch (error) {
-    console.error('❌ Test 3 failed:', error)
+    console.error(' Test 3 failed:', error)
   }
   
   console.log('')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   console.log('')
-  console.log('🎉 Agent 4 testing complete!')
+  console.log(' Agent 4 testing complete!')
 }
 
 // Run tests

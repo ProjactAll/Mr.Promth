@@ -108,7 +108,7 @@ export default function ChatSessionPage({ params }: ChatPageProps) {
                 const toolMessage: ChatMessage = {
                   id: crypto.randomUUID(),
                   role: "assistant",
-                  content: `🛠️ ${parsed.name ?? "Tool"} Result\n${parsed.content}`,
+                  content: ` ${parsed.name ?? "Tool"} Result\n${parsed.content}`,
                   createdAt: new Date().toISOString(),
                 };
                 setMessages((prev) => [...prev, toolMessage]);

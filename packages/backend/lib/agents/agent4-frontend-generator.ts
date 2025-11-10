@@ -87,13 +87,13 @@ export async function agent4GenerateFrontend(
     result.success = true
     result.nextSteps = generateNextSteps(request, result)
     
-    logger.info('[Agent 4] ✅ Frontend generation complete!')
+    logger.info('[Agent 4]  Frontend generation complete!')
     logger.info('[Agent 4] Files generated:', { data: result.filesGenerated.length })
     
     return result
     
   } catch (error) {
-    logger.error('[Agent 4] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
+    logger.error('[Agent 4]  Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -168,7 +168,7 @@ async function generatePage(
     result.dependencies.push(...generated.dependencies)
   }
   
-  logger.info('[Agent 4] ✅ Generated page:', { data: route })
+  logger.info('[Agent 4]  Generated page:', { data: route })
 }
 
 /**
@@ -227,7 +227,7 @@ async function generateComponent(
     result.dependencies.push(...generated.dependencies)
   }
   
-  logger.info('[Agent 4] ✅ Generated component:', { data: componentName })
+  logger.info('[Agent 4]  Generated component:', { data: componentName })
 }
 
 /**
@@ -287,7 +287,7 @@ async function generateForm(
     result.dependencies.push(...generated.dependencies)
   }
   
-  logger.info('[Agent 4] ✅ Generated form:', { data: componentName })
+  logger.info('[Agent 4]  Generated form:', { data: componentName })
 }
 
 /**
@@ -351,7 +351,7 @@ async function generateDashboard(
     result.dependencies.push(...generated.dependencies)
   }
   
-  logger.info('[Agent 4] ✅ Generated dashboard:', { data: route })
+  logger.info('[Agent 4]  Generated dashboard:', { data: route })
 }
 
 /**
@@ -401,7 +401,7 @@ async function generateLayout(
     result.dependencies.push(...generated.dependencies)
   }
   
-  logger.info('[Agent 4] ✅ Generated layout:', { data: route || 'root' })
+  logger.info('[Agent 4]  Generated layout:', { data: route || 'root' })
 }
 
 /**

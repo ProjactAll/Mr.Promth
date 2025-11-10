@@ -82,13 +82,13 @@ export async function agent3GenerateBackend(
     result.success = true
     result.nextSteps = generateNextSteps(request, result)
     
-    logger.info('[Agent 3] ✅ Code generation complete!')
+    logger.info('[Agent 3]  Code generation complete!')
     logger.info('[Agent 3] Files generated:', { data: result.filesGenerated.length })
     
     return result
     
   } catch (error) {
-    logger.error('[Agent 3] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
+    logger.error('[Agent 3]  Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -151,7 +151,7 @@ async function generateAPIRoutes(
       result.dependencies.push(...generated.dependencies)
     }
     
-    logger.info('[Agent 3] ✅ Generated API route:', { data: endpoint })
+    logger.info('[Agent 3]  Generated API route:', { data: endpoint })
   }
 }
 
@@ -202,7 +202,7 @@ async function generateMigrations(
     content: generated.code
   })
   
-  logger.info('[Agent 3] ✅ Generated migration:', { data: generated.filename })
+  logger.info('[Agent 3]  Generated migration:', { data: generated.filename })
 }
 
 /**
@@ -249,7 +249,7 @@ async function generateFunctions(
     }
   }
   
-  logger.info('[Agent 3] ✅ Generated functions:', { data: files.length })
+  logger.info('[Agent 3]  Generated functions:', { data: files.length })
 }
 
 /**
@@ -294,7 +294,7 @@ async function generateIntegrations(
     result.dependencies.push(...generated.dependencies)
   }
   
-  logger.info('[Agent 3] ✅ Generated integration:', { data: generated.filename })
+  logger.info('[Agent 3]  Generated integration:', { data: generated.filename })
 }
 
 /**

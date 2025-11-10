@@ -75,12 +75,12 @@ export async function agent6Deploy(
     }
     
     result.success = true
-    logger.info('[Agent 6] ✅ Deployment complete!')
+    logger.info('[Agent 6]  Deployment complete!')
     
     return result
     
   } catch (error) {
-    logger.error('[Agent 6] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
+    logger.error('[Agent 6]  Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -444,7 +444,7 @@ jobs:
     'utf-8'
   )
   
-  logger.info('[Agent 6] ✅ GitHub Actions workflow created')
+  logger.info('[Agent 6]  GitHub Actions workflow created')
 }
 
 /**

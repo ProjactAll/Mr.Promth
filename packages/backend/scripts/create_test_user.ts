@@ -37,7 +37,7 @@ async function createTestUser() {
   })
   
   if (error) {
-    console.log(`❌ Error: ${error.message}`)
+    console.log(` Error: ${error.message}`)
     
     // Try to get existing user
     const { data: { users }, error: listError } = await supabase.auth.admin.listUsers()
@@ -45,7 +45,7 @@ async function createTestUser() {
     if (!listError && users) {
       const existingUser = users.find(u => u.email === testEmail)
       if (existingUser) {
-        console.log(`\n✅ User already exists!`)
+        console.log(`\n User already exists!`)
         console.log(`User ID: ${existingUser.id}`)
         console.log(`Email: ${existingUser.email}`)
         console.log(`Created: ${existingUser.created_at}`)
@@ -53,7 +53,7 @@ async function createTestUser() {
       }
     }
   } else {
-    console.log(`✅ User created successfully!`)
+    console.log(` User created successfully!`)
     console.log(`User ID: ${data.user.id}`)
     console.log(`Email: ${data.user.email}`)
     console.log(`Created: ${data.user.created_at}`)

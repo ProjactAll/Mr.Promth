@@ -15,5 +15,5 @@ beforeAll(() => {
 })
 
 afterAll(() => {
-  console.log('✅ All tests completed')
+  console.log(' All tests completed')
 })

@@ -19,12 +19,12 @@ interface WorkflowState {
 
 const STEP_DETAILS = [
   { name: 'Initializing', icon: '', description: 'Setting up workflow environment' },
-  { name: 'Analyzing Prompt', icon: '🔍', description: 'Understanding your requirements with AI' },
+  { name: 'Analyzing Prompt', icon: '', description: 'Understanding your requirements with AI' },
   { name: 'Expanding Requirements', icon: '', description: 'Creating detailed specifications' },
-  { name: 'Generating Backend', icon: '⚙️', description: 'Creating API routes and database schema' },
-  { name: 'Generating Frontend', icon: '🎨', description: 'Building UI components and pages' },
+  { name: 'Generating Backend', icon: '', description: 'Creating API routes and database schema' },
+  { name: 'Generating Frontend', icon: '', description: 'Building UI components and pages' },
   { name: 'Running Tests', icon: '', description: 'Generating and running automated tests' },
-  { name: 'Deploying', icon: '🚢', description: 'Deploying to Vercel' },
+  { name: 'Deploying', icon: '', description: 'Deploying to Vercel' },
   { name: 'Setting up Monitoring', icon: '', description: 'Configuring health checks and monitoring' }
 ]
 
@@ -270,7 +270,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
                         {/* Checkmark */}
                         {isCompletedStep && (
                           <div className="ml-4 text-green-600 text-2xl">
-                            ✓
+                            
                           </div>
                         )}
                       </div>
@@ -348,13 +348,13 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
                         onClick={() => router.push(`/editor/${params.id}`)}
                         className="flex-1 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-lg"
                       >
-                        ✏️ Edit in Browser
+                         Edit in Browser
                       </button>
                       <button
                         onClick={handleDownload}
                         className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-lg"
                       >
-                        📦 Download Project
+                         Download Project
                       </button>
                       <button
                         onClick={() => router.push('/generate')}
@@ -382,7 +382,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
               {/* Workflow Details */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6">
                 <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                  <span className="text-xl">📋</span>
+                  <span className="text-xl"></span>
                   Workflow Details
                 </h3>
                 <div className="space-y-4 text-sm">
@@ -440,7 +440,7 @@ export default function WorkflowStatusPageEnhanced({ params }: { params: { id: s
               {workflow.results?.package && (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                    <span className="text-xl">📦</span>
+                    <span className="text-xl"></span>
                     Project Package
                   </h3>
                   <div className="space-y-3 text-sm">

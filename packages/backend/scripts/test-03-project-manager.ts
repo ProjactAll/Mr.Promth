@@ -65,19 +65,19 @@ async function testProjectManager() {
     // Test 1: Create project
     console.log('1. Creating project...')
     const project = await createProject('Test Project', 'A test project')
-    console.log(`   ✅ Project created: ${project.id}`)
+    console.log(`    Project created: ${project.id}`)
     
     // Test 2: Add files
     console.log('\n2. Adding files...')
     await addFile(project.id, 'index.html', '<html><body>Hello</body></html>')
     await addFile(project.id, 'style.css', 'body { margin: 0; }')
     await addFile(project.id, 'script.js', 'console.log("Hello");')
-    console.log('   ✅ Files added')
+    console.log('    Files added')
     
     // Test 3: List files
     console.log('\n3. Listing files...')
     const files = await listFiles(project.id)
-    console.log('   ✅ Files:', files)
+    console.log('    Files:', files)
     
     if (files.length !== 3) {
       throw new Error(`Expected 3 files, got ${files.length}`)
@@ -86,16 +86,16 @@ async function testProjectManager() {
     // Test 4: Delete project
     console.log('\n4. Deleting project...')
     await deleteProject(project.id)
-    console.log('   ✅ Project deleted')
+    console.log('    Project deleted')
     
     // Cleanup
     await fs.rm(path.join(process.cwd(), 'test-projects'), { recursive: true, force: true })
     
-    console.log('\n📊 Test Result: PASSED ✅')
+    console.log('\n Test Result: PASSED ')
     process.exit(0)
     
   } catch (error: any) {
-    console.error('\n❌ Test failed:', error.message)
+    console.error('\n Test failed:', error.message)
     process.exit(1)
   }
 }

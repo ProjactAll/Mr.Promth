@@ -33,10 +33,10 @@ async function testSupabaseConnection() {
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-    console.log('📋 Environment Variables:')
-    console.log('   SUPABASE_URL:', supabaseUrl ? '✅ Set' : '❌ Missing')
-    console.log('   ANON_KEY:', supabaseAnonKey ? '✅ Set' : '❌ Missing')
-    console.log('   SERVICE_ROLE_KEY:', supabaseServiceKey ? '✅ Set' : '❌ Missing')
+    console.log(' Environment Variables:')
+    console.log('   SUPABASE_URL:', supabaseUrl ? ' Set' : ' Missing')
+    console.log('   ANON_KEY:', supabaseAnonKey ? ' Set' : ' Missing')
+    console.log('   SERVICE_ROLE_KEY:', supabaseServiceKey ? ' Set' : ' Missing')
     console.log()
 
     if (!supabaseUrl || !supabaseAnonKey) {
@@ -44,12 +44,12 @@ async function testSupabaseConnection() {
     }
 
     // สร้าง Supabase client
-    console.log('🔌 Creating Supabase client...')
+    console.log(' Creating Supabase client...')
     const supabase = createClient(supabaseUrl, supabaseAnonKey)
-    console.log('✅ Supabase client created\n')
+    console.log(' Supabase client created\n')
 
     // ทดสอบการเชื่อมต่อด้วย health check
-    console.log('🏥 Testing connection health...')
+    console.log(' Testing connection health...')
     const { data: healthData, error: healthError } = await supabase
       .from('_health_check')
       .select('*')
@@ -58,64 +58,64 @@ async function testSupabaseConnection() {
     if (healthError) {
       // ถ้า table ไม่มีก็ไม่เป็นไร แสดงว่าเชื่อมต่อได้
       if (healthError.message.includes('does not exist')) {
-        console.log('⚠️  Health check table not found (this is OK)')
+        console.log('  Health check table not found (this is OK)')
         console.log('   Connection is working, but table "_health_check" does not exist')
       } else {
-        console.log('⚠️  Health check warning:', healthError.message)
+        console.log('  Health check warning:', healthError.message)
       }
     } else {
-      console.log('✅ Health check passed')
+      console.log(' Health check passed')
     }
     console.log()
 
     // ทดสอบ list tables
-    console.log('📊 Listing available tables...')
+    console.log(' Listing available tables...')
     const { data: tables, error: tablesError } = await supabase
       .rpc('get_tables')
       .limit(10)
 
     if (tablesError) {
-      console.log('⚠️  Could not list tables:', tablesError.message)
+      console.log('  Could not list tables:', tablesError.message)
       console.log('   This might be because the RPC function does not exist')
     } else if (tables && tables.length > 0) {
-      console.log('✅ Found tables:')
+      console.log(' Found tables:')
       tables.forEach((table: any) => {
         console.log(`   - ${table.table_name || table}`)
       })
     } else {
-      console.log('⚠️  No tables found or RPC not available')
+      console.log('  No tables found or RPC not available')
     }
     console.log()
 
     // ทดสอบ service role client
     if (supabaseServiceKey) {
-      console.log('🔐 Testing service role client...')
+      console.log(' Testing service role client...')
       const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
       
       // ลองดึง auth users (ต้องใช้ service role)
       const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers()
       
       if (authError) {
-        console.log('⚠️  Service role test warning:', authError.message)
+        console.log('  Service role test warning:', authError.message)
       } else {
-        console.log('✅ Service role client working')
+        console.log(' Service role client working')
         console.log(`   Found ${authData.users.length} users`)
       }
       console.log()
     }
 
     // สรุปผล
-    console.log('🎉 Supabase Connection Test Summary:')
-    console.log('   ✅ Environment variables configured')
-    console.log('   ✅ Supabase client created successfully')
-    console.log('   ✅ Connection to Supabase established')
-    console.log('   ✅ Ready to use in application')
+    console.log(' Supabase Connection Test Summary:')
+    console.log('    Environment variables configured')
+    console.log('    Supabase client created successfully')
+    console.log('    Connection to Supabase established')
+    console.log('    Ready to use in application')
     console.log()
-    console.log('✨ Supabase Connection: PASSED')
+    console.log(' Supabase Connection: PASSED')
 
     return true
   } catch (error) {
-    console.error('❌ Supabase connection test failed:', error)
+    console.error(' Supabase connection test failed:', error)
     if (error instanceof Error) {
       console.error('   Error message:', error.message)
       console.error('   Stack:', error.stack)

@@ -22,7 +22,7 @@ export const projectTemplates: ProjectTemplate[] = [
     name: 'Blog with CMS',
     description: 'Modern blog with content management system, markdown support, and SEO optimization',
     category: 'blog',
-    icon: '📝',
+    icon: '',
     features: [
       'Markdown blog posts',
       'Category & tag system',
@@ -41,7 +41,7 @@ export const projectTemplates: ProjectTemplate[] = [
     name: 'E-Commerce Store',
     description: 'Full-featured online store with product catalog, cart, and checkout',
     category: 'ecommerce',
-    icon: '🛒',
+    icon: '',
     features: [
       'Product catalog',
       'Shopping cart',
@@ -61,7 +61,7 @@ export const projectTemplates: ProjectTemplate[] = [
     name: 'Analytics Dashboard',
     description: 'Data visualization dashboard with charts, metrics, and real-time updates',
     category: 'dashboard',
-    icon: '📊',
+    icon: '',
     features: [
       'Interactive charts',
       'Real-time data',
@@ -80,7 +80,7 @@ export const projectTemplates: ProjectTemplate[] = [
     name: 'SaaS Starter Kit',
     description: 'Complete SaaS application with authentication, billing, and multi-tenancy',
     category: 'saas',
-    icon: '🚀',
+    icon: '',
     features: [
       'User authentication',
       'Subscription billing',
@@ -100,7 +100,7 @@ export const projectTemplates: ProjectTemplate[] = [
     name: 'Portfolio Website',
     description: 'Personal portfolio with projects showcase, blog, and contact form',
     category: 'web',
-    icon: '💼',
+    icon: '',
     features: [
       'Project showcase',
       'About page',
@@ -119,7 +119,7 @@ export const projectTemplates: ProjectTemplate[] = [
     name: 'RESTful API',
     description: 'Backend API with authentication, CRUD operations, and documentation',
     category: 'api',
-    icon: '🔌',
+    icon: '',
     features: [
       'RESTful endpoints',
       'JWT authentication',
@@ -138,7 +138,7 @@ export const projectTemplates: ProjectTemplate[] = [
     name: 'Todo Application',
     description: 'Task management app with categories, priorities, and due dates',
     category: 'web',
-    icon: '✅',
+    icon: '',
     features: [
       'Create/edit tasks',
       'Categories',
@@ -157,7 +157,7 @@ export const projectTemplates: ProjectTemplate[] = [
     name: 'Social Media Platform',
     description: 'Social network with posts, comments, likes, and user profiles',
     category: 'web',
-    icon: '👥',
+    icon: '',
     features: [
       'User profiles',
       'Posts & comments',

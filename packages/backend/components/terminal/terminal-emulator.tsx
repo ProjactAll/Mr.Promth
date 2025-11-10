@@ -76,9 +76,9 @@ export function TerminalEmulator({
     fit.fit()
 
     // Welcome message
-    terminal.writeln('\x1b[1;32m╔═══════════════════════════════════════════════════════════╗\x1b[0m')
-    terminal.writeln('\x1b[1;32m║         Welcome to Mr.Prompt Terminal                     ║\x1b[0m')
-    terminal.writeln('\x1b[1;32m╚═══════════════════════════════════════════════════════════╝\x1b[0m')
+    terminal.writeln('\x1b[1;32m\x1b[0m')
+    terminal.writeln('\x1b[1;32m         Welcome to Mr.Prompt Terminal                     \x1b[0m')
+    terminal.writeln('\x1b[1;32m\x1b[0m')
     terminal.writeln('')
     
     if (roomId) {
@@ -149,7 +149,7 @@ export function TerminalEmulator({
       setCurrentSessionId(terminalSession.id)
       setIsConnected(true)
       
-      terminal.writeln('\x1b[1;32m✓ Connected successfully\x1b[0m')
+      terminal.writeln('\x1b[1;32m Connected successfully\x1b[0m')
       terminal.writeln('')
       terminal.write('\x1b[1;32m$\x1b[0m ')
 

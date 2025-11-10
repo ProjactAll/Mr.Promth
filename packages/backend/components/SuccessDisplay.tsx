@@ -61,7 +61,7 @@ export function InfoDisplay({
   message, 
   details, 
   onDismiss,
-  icon = 'ℹ️'
+  icon = 'ℹ'
 }: InfoDisplayProps) {
   return (
     <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg shadow-sm">

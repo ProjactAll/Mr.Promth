@@ -358,7 +358,7 @@ export default function LandingPage() {
           </div>
           
           <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-            <p>© 2025 MR.Promth. All rights reserved. Built with ❤️ by AI Agents.</p>
+            <p>© 2025 MR.Promth. All rights reserved. Built with  by AI Agents.</p>
           </div>
         </div>
       </footer>

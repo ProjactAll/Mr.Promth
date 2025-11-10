@@ -19,10 +19,10 @@ try {
       }
     }
   })
-  console.log('✅ Environment variables loaded')
+  console.log(' Environment variables loaded')
   console.log(`   Loaded ${Object.keys(process.env).filter(k => k.startsWith('VANCHIN_API_KEY_')).length} Vanchin API keys\n`)
 } catch (error) {
-  console.error('❌ Failed to load .env.local:', error)
+  console.error(' Failed to load .env.local:', error)
   process.exit(1)
 }
 
@@ -38,12 +38,12 @@ async function testAgent3() {
   const testProjectPath = join('/tmp', 'test-mr-prompt-project')
   await mkdir(testProjectPath, { recursive: true })
   
-  console.log('📁 Test project path:', testProjectPath)
+  console.log(' Test project path:', testProjectPath)
   console.log('')
   
   // Test 1: Generate API Route
   console.log('Test 1: Generate API Route for Blog Posts')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   
   try {
     const result1 = await agent3GenerateBackend({
@@ -60,8 +60,8 @@ async function testAgent3() {
       }
     })
     
-    console.log('✅ Success:', result1.success)
-    console.log('📝 Files generated:', result1.filesGenerated.length)
+    console.log(' Success:', result1.success)
+    console.log(' Files generated:', result1.filesGenerated.length)
     
     result1.filesGenerated.forEach(file => {
       console.log(`   - ${file.path}`)
@@ -69,24 +69,24 @@ async function testAgent3() {
       console.log(`     Size: ${file.content.length} characters`)
     })
     
-    console.log('📦 Dependencies:', result1.dependencies)
-    console.log('🔜 Next steps:', result1.nextSteps)
+    console.log(' Dependencies:', result1.dependencies)
+    console.log(' Next steps:', result1.nextSteps)
     
     if (result1.errors && result1.errors.length > 0) {
-      console.log('❌ Errors:', result1.errors)
+      console.log(' Errors:', result1.errors)
     }
     
   } catch (error) {
-    console.error('❌ Test 1 failed:', error)
+    console.error(' Test 1 failed:', error)
   }
   
   console.log('')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   console.log('')
   
   // Test 2: Generate Database Migration
   console.log('Test 2: Generate Database Migration')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   
   try {
     const result2 = await agent3GenerateBackend({
@@ -107,8 +107,8 @@ async function testAgent3() {
       }
     })
     
-    console.log('✅ Success:', result2.success)
-    console.log('📝 Files generated:', result2.filesGenerated.length)
+    console.log(' Success:', result2.success)
+    console.log(' Files generated:', result2.filesGenerated.length)
     
     result2.filesGenerated.forEach(file => {
       console.log(`   - ${file.path}`)
@@ -117,17 +117,17 @@ async function testAgent3() {
     })
     
     if (result2.errors && result2.errors.length > 0) {
-      console.log('❌ Errors:', result2.errors)
+      console.log(' Errors:', result2.errors)
     }
     
   } catch (error) {
-    console.error('❌ Test 2 failed:', error)
+    console.error(' Test 2 failed:', error)
   }
   
   console.log('')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   console.log('')
-  console.log('🎉 Agent 3 testing complete!')
+  console.log(' Agent 3 testing complete!')
 }
 
 // Run tests

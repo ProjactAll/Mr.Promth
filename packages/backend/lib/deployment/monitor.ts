@@ -259,13 +259,13 @@ export function getStatusColor(status: DeploymentStatus['status']): string {
 export function getStatusIcon(status: DeploymentStatus['status']): string {
   switch (status) {
     case 'ready':
-      return '✅'
+      return ''
     case 'building':
-      return '🔨'
+      return ''
     case 'error':
-      return '❌'
+      return ''
     case 'canceled':
-      return '⚠️'
+      return ''
     default:
       return '⏳'
   }

@@ -70,10 +70,10 @@ export class VanchinClient {
     this.models = Object.values(VANCHIN_MODELS)
     
     if (this.models.length === 0) {
-      console.warn('⚠️  No Vanchin models loaded from environment variables')
+      console.warn('  No Vanchin models loaded from environment variables')
       console.warn('Please set VANCHIN_API_KEY_N and VANCHIN_ENDPOINT_N in .env.local')
     } else {
-      console.log(`✅ Loaded ${this.models.length} Vanchin AI models`)
+      console.log(` Loaded ${this.models.length} Vanchin AI models`)
     }
   }
 

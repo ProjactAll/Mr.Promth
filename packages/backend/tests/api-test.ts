@@ -126,7 +126,7 @@ async function runTests() {
     const result = await testRoute(route)
     results.push(result)
     
-    const icon = result.status === 'PASS' ? '✅' : result.status === 'SKIP' ? '⏭️' : '❌'
+    const icon = result.status === 'PASS' ? '' : result.status === 'SKIP' ? '⏭' : ''
     const statusCode = result.statusCode ? ` (${result.statusCode})` : ''
     const note = result.note ? ` - ${result.note}` : ''
     const error = result.error ? ` - ${result.error}` : ''
@@ -135,7 +135,7 @@ async function runTests() {
   }
   
   console.log('=' .repeat(80))
-  console.log('\n📊 Test Summary\n')
+  console.log('\n Test Summary\n')
   
   const passed = results.filter(r => r.status === 'PASS').length
   const failed = results.filter(r => r.status === 'FAIL').length
@@ -143,19 +143,19 @@ async function runTests() {
   const total = results.length
   
   console.log(`Total Routes: ${total}`)
-  console.log(`✅ Passed: ${passed}`)
-  console.log(`❌ Failed: ${failed}`)
-  console.log(`⏭️ Skipped: ${skipped}`)
+  console.log(` Passed: ${passed}`)
+  console.log(` Failed: ${failed}`)
+  console.log(`⏭ Skipped: ${skipped}`)
   console.log(`\nSuccess Rate: ${((passed / (total - skipped)) * 100).toFixed(1)}%`)
   
   if (failed > 0) {
-    console.log('\n❌ Failed Routes:')
+    console.log('\n Failed Routes:')
     results.filter(r => r.status === 'FAIL').forEach(r => {
       console.log(`  - ${r.method} ${r.route}: ${r.error}`)
     })
   }
   
-  console.log('\n✅ Test completed!')
+  console.log('\n Test completed!')
 }
 
 // Run tests

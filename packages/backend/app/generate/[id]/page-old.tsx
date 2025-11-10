@@ -27,7 +27,7 @@ const STEP_NAMES = [
   'Setting up Monitoring'
 ]
 
-const STEP_ICONS = ['', '🔍', '', '⚙️', '🎨', '', '🚢', '']
+const STEP_ICONS = ['', '', '', '', '', '', '', '']
 
 export default function WorkflowStatusPage({ params }: { params: { id: string } }) {
   const router = useRouter()

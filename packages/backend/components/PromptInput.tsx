@@ -230,7 +230,7 @@ export function PromptInput({ onGenerate, isLoading = false }: PromptInputProps)
             <p> <strong>Agent Mode:</strong> ใช้ระบบ Agent สร้างเว็บไซต์สมบูรณ์</p>
           )}
           {mode === 'chat' && (
-            <p>💬 <strong>Chat Mode:</strong> คุยกับ AI แบบธรรมดา ถามตอบทั่วไป</p>
+            <p> <strong>Chat Mode:</strong> คุยกับ AI แบบธรรมดา ถามตอบทั่วไป</p>
           )}
         </div>
       </div>

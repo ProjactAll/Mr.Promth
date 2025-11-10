@@ -8,10 +8,10 @@ const supabase = createClient(url, key)
 async function check() {
   const { data, error } = await supabase.from('workflows').select('id').limit(1)
   if (error) {
-    console.log('❌ Workflows table does not exist:', error.message)
+    console.log(' Workflows table does not exist:', error.message)
     process.exit(1)
   } else {
-    console.log('✅ Workflows table exists')
+    console.log(' Workflows table exists')
     process.exit(0)
   }
 }

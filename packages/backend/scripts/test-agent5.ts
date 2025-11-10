@@ -15,7 +15,7 @@ async function testAgent5() {
   await mkdir(testProjectPath, { recursive: true })
   await mkdir(join(testProjectPath, 'lib', 'utils'), { recursive: true })
   
-  console.log('📁 Test project path:', testProjectPath)
+  console.log(' Test project path:', testProjectPath)
   console.log('')
   
   // Create a sample function to test
@@ -49,12 +49,12 @@ export function capitalize(text: string): string {
   const sampleFilePath = join(testProjectPath, 'lib', 'utils', 'string.ts')
   await writeFile(sampleFilePath, sampleFunction, 'utf-8')
   
-  console.log('📝 Created sample file:', sampleFilePath)
+  console.log(' Created sample file:', sampleFilePath)
   console.log('')
   
   // Test 1: Generate Tests
   console.log('Test 1: Generate Tests for String Utilities')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   
   try {
     const result1 = await agent5TestingQA({
@@ -67,30 +67,30 @@ export function capitalize(text: string): string {
       }
     })
     
-    console.log('✅ Success:', result1.success)
+    console.log(' Success:', result1.success)
     
     if (result1.testsGenerated) {
-      console.log('📝 Tests generated:', result1.testsGenerated.length)
+      console.log(' Tests generated:', result1.testsGenerated.length)
       result1.testsGenerated.forEach(test => {
         console.log(`   - ${test.path}`)
         console.log(`     Size: ${test.content.length} characters`)
       })
     }
     
-    console.log('💡 Recommendations:', result1.recommendations)
+    console.log(' Recommendations:', result1.recommendations)
     
     if (result1.errors && result1.errors.length > 0) {
-      console.log('❌ Errors:', result1.errors)
+      console.log(' Errors:', result1.errors)
     }
     
   } catch (error) {
-    console.error('❌ Test 1 failed:', error)
+    console.error(' Test 1 failed:', error)
   }
   
   console.log('')
-  console.log('─'.repeat(50))
+  console.log(''.repeat(50))
   console.log('')
-  console.log('🎉 Agent 5 testing complete!')
+  console.log(' Agent 5 testing complete!')
   console.log('')
   console.log('Note: Agent 5 can also:')
   console.log('  - Run tests (type: run-tests)')

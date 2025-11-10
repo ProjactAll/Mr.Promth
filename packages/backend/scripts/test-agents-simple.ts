@@ -19,9 +19,9 @@ try {
       }
     }
   })
-  console.log('✅ Environment variables loaded\n')
+  console.log(' Environment variables loaded\n')
 } catch (error) {
-  console.warn('⚠️  Could not load .env.local file\n')
+  console.warn('  Could not load .env.local file\n')
 }
 
 import { executeAgent1 } from './lib/agents/agent1'
@@ -32,20 +32,20 @@ async function testAgentsSimple() {
 
   try {
     // Test Agent 1: Prompt Expander
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-    console.log('1️⃣  Agent 1: Prompt Expander & Analyzer')
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+    console.log('')
+    console.log('1⃣  Agent 1: Prompt Expander & Analyzer')
+    console.log('\n')
     
     const testPrompt = 'Create a simple todo app with Next.js and Supabase'
-    console.log('📝 Input prompt:', testPrompt)
+    console.log(' Input prompt:', testPrompt)
     console.log('⏳ Processing...\n')
     
     const startTime1 = Date.now()
     const agent1Output = await executeAgent1(testPrompt)
     const duration1 = Date.now() - startTime1
     
-    console.log('✅ Agent 1 completed in', duration1, 'ms')
-    console.log('\n📊 Agent 1 Output:')
+    console.log(' Agent 1 completed in', duration1, 'ms')
+    console.log('\n Agent 1 Output:')
     console.log('   Project type:', agent1Output.project_type)
     
     // Handle tech_stack (might be array or object)
@@ -77,9 +77,9 @@ async function testAgentsSimple() {
     console.log()
 
     // Test Agent 2: Architecture Designer
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-    console.log('2️⃣  Agent 2: Architecture Designer')
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+    console.log('')
+    console.log('2⃣  Agent 2: Architecture Designer')
+    console.log('\n')
     
     console.log('⏳ Processing...\n')
     
@@ -87,8 +87,8 @@ async function testAgentsSimple() {
     const agent2Output = await executeAgent2(agent1Output)
     const duration2 = Date.now() - startTime2
     
-    console.log('✅ Agent 2 completed in', duration2, 'ms')
-    console.log('\n📊 Agent 2 Output:')
+    console.log(' Agent 2 completed in', duration2, 'ms')
+    console.log('\n Agent 2 Output:')
     
     // Handle database tables
     if (agent2Output.database_schema?.tables && Array.isArray(agent2Output.database_schema.tables)) {
@@ -127,25 +127,25 @@ async function testAgentsSimple() {
     console.log()
 
     // Summary
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-    console.log('🎉 Test Summary')
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
-    console.log('   ✅ Agent 1: Prompt Expander & Analyzer')
+    console.log('')
+    console.log(' Test Summary')
+    console.log('\n')
+    console.log('    Agent 1: Prompt Expander & Analyzer')
     console.log(`      Duration: ${duration1}ms`)
     console.log(`      Output: ${agent1Output.features.length} features, ${agent1Output.pages.length} pages`)
     console.log()
-    console.log('   ✅ Agent 2: Architecture Designer')
+    console.log('    Agent 2: Architecture Designer')
     console.log(`      Duration: ${duration2}ms`)
     console.log(`      Output: ${agent2Output.database_schema.tables.length} tables, ${agent2Output.api_endpoints.length} endpoints`)
     console.log()
-    console.log('   ✅ Total time:', duration1 + duration2, 'ms')
+    console.log('    Total time:', duration1 + duration2, 'ms')
     console.log()
-    console.log('✨ Agent 1-2 Integration: PASSED')
+    console.log(' Agent 1-2 Integration: PASSED')
     console.log()
 
     return { success: true, agent1Output, agent2Output }
   } catch (error) {
-    console.error('\n❌ Agent test failed:', error)
+    console.error('\n Agent test failed:', error)
     if (error instanceof Error) {
       console.error('   Error message:', error.message)
       console.error('   Stack:', error.stack)

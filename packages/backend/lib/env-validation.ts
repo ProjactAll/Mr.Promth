@@ -119,24 +119,24 @@ export function printEnvStatus(): void {
 
   try {
     validateEnv()
-    console.log('✅ Supabase: Configured')
+    console.log(' Supabase: Configured')
   } catch (error) {
-    console.log('❌ Supabase: Not configured')
+    console.log(' Supabase: Not configured')
     console.log((error as Error).message)
   }
 
   const vanchinModels = getConfiguredVanchinModelsCount()
   if (vanchinModels > 0) {
-    console.log(`✅ Vanchin AI: ${vanchinModels} models configured`)
+    console.log(` Vanchin AI: ${vanchinModels} models configured`)
   } else {
-    console.log('⚠️  Vanchin AI: No models configured')
+    console.log('  Vanchin AI: No models configured')
   }
 
   const agentsCount = getConfiguredAgentsCount()
   if (agentsCount > 0) {
-    console.log(`✅ AI Agents: ${agentsCount}/7 configured`)
+    console.log(` AI Agents: ${agentsCount}/7 configured`)
   } else {
-    console.log('⚠️  AI Agents: None configured')
+    console.log('  AI Agents: None configured')
   }
 
   console.log('='.repeat(50))

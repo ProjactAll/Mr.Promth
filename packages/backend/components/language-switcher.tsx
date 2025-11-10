@@ -38,13 +38,13 @@ export function LanguageSwitcher() {
           onClick={() => handleLocaleChange('th')}
           className={currentLocale === 'th' ? 'bg-accent' : ''}
         >
-          🇹🇭 ภาษาไทย
+           ภาษาไทย
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleLocaleChange('en')}
           className={currentLocale === 'en' ? 'bg-accent' : ''}
         >
-          🇬🇧 English
+           English
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

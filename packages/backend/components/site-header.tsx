@@ -47,7 +47,7 @@ export function SiteHeader() {
           </Link>
           <Link href="/chat">
             <Button size="sm" className="btn-primary gap-2">
-              💬 แชท AI
+               แชท AI
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>

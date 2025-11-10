@@ -149,7 +149,7 @@ export class WorkflowOrchestrator {
       
       // Complete
       await this.updateStatus('completed', 7)
-      console.log('[Workflow] ✅ Workflow completed:', this.state.id)
+      console.log('[Workflow]  Workflow completed:', this.state.id)
       
       // Emit completion event
       const duration = Date.now() - startTime
@@ -162,7 +162,7 @@ export class WorkflowOrchestrator {
       return this.state
       
     } catch (error) {
-      console.error('[Workflow] ❌ Error:', error)
+      console.error('[Workflow]  Error:', error)
       this.state.status = 'failed'
       const errorMessage = error instanceof Error ? error.message : String(error)
       this.state.errors.push(errorMessage)
@@ -521,7 +521,7 @@ Respond in JSON format.`
     // Upload to Supabase Storage
     const downloadUrl = await this.projectManager.uploadToStorage(pkg, this.state.userId)
     
-    console.log('[Workflow] ✅ Project packaged and uploaded')
+    console.log('[Workflow]  Project packaged and uploaded')
     
     return {
       zipPath: pkg.zipPath,

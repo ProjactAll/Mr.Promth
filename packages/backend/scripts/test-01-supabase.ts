@@ -12,19 +12,19 @@ async function testSupabaseConnection() {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
   if (!supabaseUrl || !supabaseKey) {
-    console.error('❌ Missing Supabase credentials')
+    console.error(' Missing Supabase credentials')
     console.log('  NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing')
     console.log('  NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseKey ? 'Set' : 'Missing')
     process.exit(1)
   }
   
-  console.log('✅ Environment variables found')
+  console.log(' Environment variables found')
   console.log(`  URL: ${supabaseUrl}`)
   console.log(`  Key: ${supabaseKey.substring(0, 20)}...`)
   
   try {
     const supabase = createClient(supabaseUrl, supabaseKey)
-    console.log('\n✅ Supabase client created')
+    console.log('\n Supabase client created')
     
     // Test connection by querying a table
     const { data, error } = await supabase
@@ -33,16 +33,16 @@ async function testSupabaseConnection() {
       .limit(1)
     
     if (error) {
-      console.error('\n❌ Database query failed:', error.message)
+      console.error('\n Database query failed:', error.message)
       process.exit(1)
     }
     
-    console.log('✅ Database connection successful')
-    console.log('\n📊 Test Result: PASSED ✅')
+    console.log(' Database connection successful')
+    console.log('\n Test Result: PASSED ')
     process.exit(0)
     
   } catch (error: any) {
-    console.error('\n❌ Connection failed:', error.message)
+    console.error('\n Connection failed:', error.message)
     process.exit(1)
   }
 }

@@ -115,7 +115,7 @@ export default function PromptDetailPage() {
           </div>
           <p className="text-gray-600 text-lg mb-4">{prompt.description}</p>
           <div className="flex items-center gap-4 text-sm text-gray-500">
-            <span>⭐ {prompt.average_rating?.toFixed(1) || "N/A"}</span>
+            <span> {prompt.average_rating?.toFixed(1) || "N/A"}</span>
             <span>•</span>
             <span>{prompt.usage_count || 0} uses</span>
           </div>
@@ -196,7 +196,7 @@ export default function PromptDetailPage() {
                     variant="outline"
                     onClick={() => navigator.clipboard.writeText(result)}
                   >
-                    📋 Copy
+                     Copy
                   </Button>
                   <Button
                     variant="outline"
@@ -209,7 +209,7 @@ export default function PromptDetailPage() {
                       a.click();
                     }}
                   >
-                    💾 Download
+                     Download
                   </Button>
                 </div>
               </div>

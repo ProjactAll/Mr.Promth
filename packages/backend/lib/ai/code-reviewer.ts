@@ -155,23 +155,23 @@ export async function quickSecurityScan(code: string): Promise<string[]> {
 
   // Basic security checks
   if (code.includes('eval(')) {
-    issues.push('⚠️ Use of eval() detected - potential security risk');
+    issues.push(' Use of eval() detected - potential security risk');
   }
 
   if (code.match(/process\.env\.[A-Z_]+/g) && !code.includes('NEXT_PUBLIC_')) {
-    issues.push('⚠️ Direct environment variable access - ensure proper sanitization');
+    issues.push(' Direct environment variable access - ensure proper sanitization');
   }
 
   if (code.includes('dangerouslySetInnerHTML')) {
-    issues.push('⚠️ Use of dangerouslySetInnerHTML - XSS risk');
+    issues.push(' Use of dangerouslySetInnerHTML - XSS risk');
   }
 
   if (code.match(/password|secret|key/i) && code.includes('=')) {
-    issues.push('⚠️ Potential hardcoded credentials detected');
+    issues.push(' Potential hardcoded credentials detected');
   }
 
   if (code.includes('SELECT') && code.includes('+')) {
-    issues.push('⚠️ Potential SQL injection vulnerability');
+    issues.push(' Potential SQL injection vulnerability');
   }
 
   return issues;

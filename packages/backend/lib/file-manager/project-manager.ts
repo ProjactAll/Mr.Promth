@@ -85,7 +85,7 @@ export class ProjectManager {
     // Create .gitignore
     await this.createGitignore(projectPath)
     
-    console.log('[ProjectManager] ✅ Project structure created')
+    console.log('[ProjectManager]  Project structure created')
     
     return projectPath
   }
@@ -131,7 +131,7 @@ export class ProjectManager {
     // Write file
     await writeFile(fullPath, file.content, 'utf-8')
     
-    console.log('[ProjectManager] ✅ Written:', relativePath)
+    console.log('[ProjectManager]  Written:', relativePath)
   }
   
   /**
@@ -359,11 +359,11 @@ next-env.d.ts
         if (error) {
           console.error('[ProjectManager] Error saving file:', relativePath, error)
         } else {
-          console.log('[ProjectManager] ✅ Saved:', relativePath)
+          console.log('[ProjectManager]  Saved:', relativePath)
         }
       }
       
-      console.log('[ProjectManager] ✅ All files saved to database')
+      console.log('[ProjectManager]  All files saved to database')
     } catch (error) {
       console.error('[ProjectManager] Error saving files to database:', error)
       throw error
@@ -418,7 +418,7 @@ next-env.d.ts
     const fileCount = await this.countFiles(projectPath)
     const zipStats = await stat(zipPath)
     
-    console.log('[ProjectManager] ✅ Project packaged:', zipPath)
+    console.log('[ProjectManager]  Project packaged:', zipPath)
     console.log('[ProjectManager] Size:', (zipStats.size / 1024 / 1024).toFixed(2), 'MB')
     console.log('[ProjectManager] Files:', fileCount)
     
@@ -468,7 +468,7 @@ next-env.d.ts
       .from('projects')
       .getPublicUrl(fileName)
     
-    console.log('[ProjectManager] ✅ Uploaded to:', urlData.publicUrl)
+    console.log('[ProjectManager]  Uploaded to:', urlData.publicUrl)
     
     return urlData.publicUrl
   }
@@ -482,7 +482,7 @@ next-env.d.ts
     try {
       await rm(projectPath, { recursive: true, force: true })
       await rm(`${projectPath}.zip`, { force: true })
-      console.log('[ProjectManager] ✅ Cleaned up')
+      console.log('[ProjectManager]  Cleaned up')
     } catch (error) {
       console.error('[ProjectManager] Cleanup error:', error)
     }

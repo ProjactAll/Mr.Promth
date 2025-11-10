@@ -53,17 +53,17 @@ export default function HomePage() {
             description="Multi-step Agents ที่ทำงานซับซ้อนได้อัตโนมัติ - Blog Writer, Code Generator, Market Analyst"
           />
           <FeatureCard
-            icon="🛠️"
+            icon=""
             title="Advanced Tools"
             description="PDF Reader, CSV Parser, Image Analysis - ทำงานกับไฟล์ได้จริง"
           />
           <FeatureCard
-            icon="🇹🇭"
+            icon=""
             title="รองรับภาษาไทย"
             description="ใช้งานภาษาไทยได้เต็มรูปแบบ - Prompts และ Results เป็นภาษาไทย"
           />
           <FeatureCard
-            icon="💰"
+            icon=""
             title="ราคาถูก"
             description="เริ่มต้นฟรี 100 executions - Pro แค่ ฿299/เดือน ไม่จำกัด"
           />

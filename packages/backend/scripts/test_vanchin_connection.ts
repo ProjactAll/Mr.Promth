@@ -59,7 +59,7 @@ async function testModel(modelKey: keyof typeof VANCHIN_MODELS): Promise<TestRes
 }
 
 async function testAllModels() {
-  console.log('🚀 Testing Vanchin AI Connection...\n')
+  console.log(' Testing Vanchin AI Connection...\n')
   console.log('=' .repeat(80))
   console.log('Testing 19 Vanchin AI Models')
   console.log('=' .repeat(80))
@@ -79,10 +79,10 @@ async function testAllModels() {
     results.push(result)
     
     if (result.status === 'success') {
-      console.log(`✅ SUCCESS - Response time: ${result.responseTime}ms`)
+      console.log(` SUCCESS - Response time: ${result.responseTime}ms`)
       console.log(`   Response: ${result.response?.substring(0, 60)}...`)
     } else {
-      console.log(`❌ FAILED - ${result.error}`)
+      console.log(` FAILED - ${result.error}`)
     }
     
     console.log()
@@ -106,9 +106,9 @@ async function testAllModels() {
     .reduce((sum, r) => sum + r.responseTime, 0) / successCount
   
   console.log(`Total Models: ${results.length}`)
-  console.log(`✅ Successful: ${successCount}`)
-  console.log(`❌ Failed: ${failedCount}`)
-  console.log(`⚡ Average Response Time: ${avgResponseTime.toFixed(0)}ms`)
+  console.log(` Successful: ${successCount}`)
+  console.log(` Failed: ${failedCount}`)
+  console.log(` Average Response Time: ${avgResponseTime.toFixed(0)}ms`)
   console.log()
   
   if (failedCount > 0) {
@@ -128,13 +128,13 @@ async function testAllModels() {
   const fs = require('fs')
   fs.writeFileSync(filename, JSON.stringify(results, null, 2))
   
-  console.log(`📝 Results saved to: ${filename}`)
+  console.log(` Results saved to: ${filename}`)
   console.log()
   
   if (successCount === results.length) {
-    console.log('🎉 All models are working perfectly!')
+    console.log(' All models are working perfectly!')
   } else {
-    console.log('⚠️  Some models failed. Please check the errors above.')
+    console.log('  Some models failed. Please check the errors above.')
   }
 }
 

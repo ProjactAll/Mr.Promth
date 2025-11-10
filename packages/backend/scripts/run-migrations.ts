@@ -14,7 +14,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-  console.error('❌ Missing Supabase credentials')
+  console.error(' Missing Supabase credentials')
   console.error('Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY')
   process.exit(1)
 }
@@ -22,7 +22,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
 async function runMigration(filename: string, sql: string) {
-  console.log(`\n📝 Running migration: ${filename}`)
+  console.log(`\n Running migration: ${filename}`)
   
   try {
     // Execute SQL using Supabase client
@@ -47,18 +47,18 @@ async function runMigration(filename: string, sql: string) {
       }
     }
     
-    console.log(`✅ Migration completed: ${filename}`)
+    console.log(` Migration completed: ${filename}`)
     return true
   } catch (error) {
-    console.error(`❌ Migration failed: ${filename}`)
+    console.error(` Migration failed: ${filename}`)
     console.error(error)
     return false
   }
 }
 
 async function main() {
-  console.log('🚀 Starting database migrations...\n')
-  console.log(`📍 Supabase URL: ${SUPABASE_URL}`)
+  console.log(' Starting database migrations...\n')
+  console.log(` Supabase URL: ${SUPABASE_URL}`)
   
   const migrationsDir = join(__dirname, '../supabase/migrations')
   
@@ -67,7 +67,7 @@ async function main() {
     .filter(f => f.endsWith('.sql'))
     .sort()
   
-  console.log(`\n📂 Found ${files.length} migration files\n`)
+  console.log(`\n Found ${files.length} migration files\n`)
   
   let successCount = 0
   let failCount = 0
@@ -76,12 +76,12 @@ async function main() {
   const schemaPath = join(__dirname, '../supabase/schema.sql')
   try {
     const schemaSql = readFileSync(schemaPath, 'utf-8')
-    console.log('📝 Running schema.sql first...')
+    console.log(' Running schema.sql first...')
     const success = await runMigration('schema.sql', schemaSql)
     if (success) successCount++
     else failCount++
   } catch (error) {
-    console.log('ℹ️  schema.sql not found, skipping...')
+    console.log('ℹ  schema.sql not found, skipping...')
   }
   
   // Run all migrations
@@ -95,20 +95,20 @@ async function main() {
   }
   
   console.log('\n' + '='.repeat(50))
-  console.log('📊 Migration Summary:')
-  console.log(`✅ Successful: ${successCount}`)
-  console.log(`❌ Failed: ${failCount}`)
+  console.log(' Migration Summary:')
+  console.log(` Successful: ${successCount}`)
+  console.log(` Failed: ${failCount}`)
   console.log('='.repeat(50) + '\n')
   
   if (failCount > 0) {
-    console.log('⚠️  Some migrations failed. Please check the errors above.')
+    console.log('  Some migrations failed. Please check the errors above.')
     process.exit(1)
   } else {
-    console.log('🎉 All migrations completed successfully!')
+    console.log(' All migrations completed successfully!')
   }
 }
 
 main().catch(error => {
-  console.error('💥 Fatal error:', error)
+  console.error(' Fatal error:', error)
   process.exit(1)
 })

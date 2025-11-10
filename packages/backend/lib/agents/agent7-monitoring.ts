@@ -91,12 +91,12 @@ export async function agent7Monitor(
     }
     
     result.success = true
-    logger.info('[Agent 7] ✅ Monitoring task complete!')
+    logger.info('[Agent 7]  Monitoring task complete!')
     
     return result
     
   } catch (error) {
-    logger.error('[Agent 7] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
+    logger.error('[Agent 7]  Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -225,17 +225,17 @@ async function getMetrics(
   
   // Recommendations based on metrics
   if (result.metrics.errors.total > 50) {
-    result.recommendations.push('⚠️ High error rate detected')
+    result.recommendations.push(' High error rate detected')
     result.recommendations.push('Review recent errors in System Logs')
   } else {
-    result.recommendations.push('✅ Error rate is normal')
+    result.recommendations.push(' Error rate is normal')
   }
   
   if (result.metrics.users && result.metrics.users.active < result.metrics.users.total * 0.2) {
-    result.recommendations.push('⚠️ Low user engagement')
+    result.recommendations.push(' Low user engagement')
     result.recommendations.push('Consider user retention strategies')
   } else if (result.metrics.users) {
-    result.recommendations.push('✅ Good user engagement')
+    result.recommendations.push(' Good user engagement')
   }
 }
 
@@ -298,9 +298,9 @@ async function healthCheck(
   }
   
   if (allHealthy) {
-    result.recommendations.push('✅ All systems operational')
+    result.recommendations.push(' All systems operational')
   } else {
-    result.recommendations.push('⚠️ Some systems are degraded')
+    result.recommendations.push(' Some systems are degraded')
     if (!checks.database) result.recommendations.push('- Database connection failed')
     if (!checks.api) result.recommendations.push('- API is not responding')
     if (!checks.auth) result.recommendations.push('- Auth service is down')
@@ -388,7 +388,7 @@ export async function setupMonitoringAlerts(
     created_at: new Date().toISOString()
   })
   
-  logger.info('[Agent 7] ✅ Monitoring alerts configured')
+  logger.info('[Agent 7]  Monitoring alerts configured')
 }
 
 /**

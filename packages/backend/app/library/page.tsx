@@ -49,9 +49,9 @@ export default function PromptLibraryPage() {
 
   const categories = [
     { id: "all", name: "All", icon: "" },
-    { id: "content", name: "Content Creation", icon: "✍️" },
-    { id: "code", name: "Code Generation", icon: "💻" },
-    { id: "business", name: "Business", icon: "💼" },
+    { id: "content", name: "Content Creation", icon: "" },
+    { id: "code", name: "Code Generation", icon: "" },
+    { id: "business", name: "Business", icon: "" },
     { id: "data", name: "Data Analysis", icon: "" },
     { id: "education", name: "Education", icon: "" },
   ];
@@ -128,7 +128,7 @@ function PromptCard({ prompt }: { prompt: any }) {
           {prompt.description}
         </p>
         <div className="flex items-center justify-between text-sm text-gray-500">
-          <span>⭐ {prompt.average_rating?.toFixed(1) || "N/A"}</span>
+          <span> {prompt.average_rating?.toFixed(1) || "N/A"}</span>
           <span>{prompt.usage_count || 0} uses</span>
         </div>
       </div>

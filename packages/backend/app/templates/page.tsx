@@ -192,7 +192,7 @@ export default function TemplatesPage() {
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                  <span>⏱️ {template.estimatedTime}</span>
+                  <span>⏱ {template.estimatedTime}</span>
                 </div>
 
                 <Button

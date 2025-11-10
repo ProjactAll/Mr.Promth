@@ -16,18 +16,18 @@ async function testFileSystem() {
     // Test 1: Create directory
     console.log('1. Creating test directory...')
     await fs.mkdir(testDir, { recursive: true })
-    console.log('   ✅ Directory created')
+    console.log('    Directory created')
     
     // Test 2: Write file
     console.log('\n2. Writing test file...')
     await fs.writeFile(testFile, 'Hello, World!')
-    console.log('   ✅ File written')
+    console.log('    File written')
     
     // Test 3: Read file
     console.log('\n3. Reading test file...')
     const content = await fs.readFile(testFile, 'utf-8')
     if (content === 'Hello, World!') {
-      console.log('   ✅ File read correctly:', content)
+      console.log('    File read correctly:', content)
     } else {
       throw new Error(`Content mismatch: ${content}`)
     }
@@ -35,23 +35,23 @@ async function testFileSystem() {
     // Test 4: List directory
     console.log('\n4. Listing directory...')
     const files = await fs.readdir(testDir)
-    console.log('   ✅ Files found:', files)
+    console.log('    Files found:', files)
     
     // Test 5: Delete file
     console.log('\n5. Deleting test file...')
     await fs.unlink(testFile)
-    console.log('   ✅ File deleted')
+    console.log('    File deleted')
     
     // Test 6: Delete directory
     console.log('\n6. Deleting test directory...')
     await fs.rmdir(testDir)
-    console.log('   ✅ Directory deleted')
+    console.log('    Directory deleted')
     
-    console.log('\n📊 Test Result: PASSED ✅')
+    console.log('\n Test Result: PASSED ')
     process.exit(0)
     
   } catch (error: any) {
-    console.error('\n❌ Test failed:', error.message)
+    console.error('\n Test failed:', error.message)
     process.exit(1)
   }
 }

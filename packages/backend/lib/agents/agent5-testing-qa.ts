@@ -88,12 +88,12 @@ export async function agent5TestingQA(
     }
     
     result.success = true
-    logger.info('[Agent 5] ✅ Testing & QA complete!')
+    logger.info('[Agent 5]  Testing & QA complete!')
     
     return result
     
   } catch (error) {
-    logger.error('[Agent 5] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
+    logger.error('[Agent 5]  Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -133,7 +133,7 @@ async function generateTests(
         content: testCode
       })
       
-      logger.info('[Agent 5] ✅ Generated test:', { data: testFilePath })
+      logger.info('[Agent 5]  Generated test:', { data: testFilePath })
       
     } catch (error) {
       logger.error('[Agent 5] Error generating test for', error instanceof Error ? error : new Error(String(error)))
@@ -249,9 +249,9 @@ async function runTests(
     }
     
     if (result.testResults.failed === 0) {
-      result.recommendations.push('✅ All tests passed!')
+      result.recommendations.push(' All tests passed!')
     } else {
-      result.recommendations.push(`⚠️ ${result.testResults.failed} tests failed`)
+      result.recommendations.push(` ${result.testResults.failed} tests failed`)
       result.recommendations.push('Check test output for details')
     }
     
@@ -311,9 +311,9 @@ async function checkCoverage(
     ) / 4
     
     if (avgCoverage >= threshold) {
-      result.recommendations.push(`✅ Coverage ${avgCoverage.toFixed(1)}% meets threshold ${threshold}%`)
+      result.recommendations.push(` Coverage ${avgCoverage.toFixed(1)}% meets threshold ${threshold}%`)
     } else {
-      result.recommendations.push(`⚠️ Coverage ${avgCoverage.toFixed(1)}% below threshold ${threshold}%`)
+      result.recommendations.push(` Coverage ${avgCoverage.toFixed(1)}% below threshold ${threshold}%`)
       result.recommendations.push('Consider adding more tests')
     }
     
@@ -350,9 +350,9 @@ async function runE2ETests(
     }
     
     if (result.testResults.failed === 0) {
-      result.recommendations.push('✅ All E2E tests passed!')
+      result.recommendations.push(' All E2E tests passed!')
     } else {
-      result.recommendations.push(`⚠️ ${result.testResults.failed} E2E tests failed`)
+      result.recommendations.push(` ${result.testResults.failed} E2E tests failed`)
     }
     
   } catch (error) {

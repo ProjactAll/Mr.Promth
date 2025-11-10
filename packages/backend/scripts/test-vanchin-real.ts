@@ -27,9 +27,9 @@ async function testVanchinAI() {
       max_tokens: 50
     })
     
-    console.log(`  ✅ Response: ${response.choices[0].message.content}\n`)
+    console.log(`   Response: ${response.choices[0].message.content}\n`)
   } catch (error: any) {
-    console.error(`  ❌ Error: ${error.message}\n`)
+    console.error(`   Error: ${error.message}\n`)
     throw error
   }
   
@@ -50,9 +50,9 @@ async function testVanchinAI() {
       max_tokens: 10
     })
     
-    console.log(`  ✅ Response: ${response.choices[0].message.content}\n`)
+    console.log(`   Response: ${response.choices[0].message.content}\n`)
   } catch (error: any) {
-    console.error(`  ❌ Error: ${error.message}\n`)
+    console.error(`   Error: ${error.message}\n`)
     throw error
   }
   
@@ -73,26 +73,26 @@ async function testVanchinAI() {
       max_tokens: 20
     })
     
-    console.log(`  ✅ Response: ${response.choices[0].message.content}\n`)
+    console.log(`   Response: ${response.choices[0].message.content}\n`)
   } catch (error: any) {
-    console.error(`  ❌ Error: ${error.message}\n`)
+    console.error(`   Error: ${error.message}\n`)
     throw error
   }
   
-  console.log('✅ All Vanchin AI tests passed!')
-  console.log('\n📊 Summary:')
+  console.log(' All Vanchin AI tests passed!')
+  console.log('\n Summary:')
   console.log(`  Total models configured: ${Object.keys(VANCHIN_MODELS).length}`)
   console.log(`  Models tested: 3`)
-  console.log(`  All tests: PASSED ✅`)
+  console.log(`  All tests: PASSED `)
 }
 
 // Run tests
 testVanchinAI()
   .then(() => {
-    console.log('\n✅ Vanchin AI is working correctly!')
+    console.log('\n Vanchin AI is working correctly!')
     process.exit(0)
   })
   .catch((error) => {
-    console.error('\n❌ Vanchin AI test failed:', error)
+    console.error('\n Vanchin AI test failed:', error)
     process.exit(1)
   })
