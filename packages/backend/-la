@@ -1,0 +1,80 @@
+[33mfecc690[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m docs: Add environment variables setup guide for new AI assistants
+[33m73e8f98[m docs: Add comprehensive optimization summary report
+[33me62fac9[m feat: Add production-ready configuration for international scale
+[33m9fe81c6[m feat: Add AI model allocation strategy and comprehensive handover documentation
+[33m61588a5[m docs: Add production testing report
+[33m4476d0e[m feat: Add database migration for project_files and workflow context
+[33m7fa18cc[m 🎉 PROJECT COMPLETE - Mr.Prompt Production Ready 100%
+[33m024b03c[m Phase 6 FINAL - Complete Production Setup
+[33m9e3f56a[m Phase 5 Complete - Production Deployment Ready
+[33m6dd566f[m Phase 4 Complete - Testing & Bug Analysis
+[33m33f7bfd[m Phase 3 Complete - Add Context Awareness to Chat
+[33m0a4e056[m Phase 2 Complete - Integrate Code Editor with Workflow (REAL)
+[33m820176b[m Phase 1 Complete - Implement Iterative Development (REAL)
+[33m5ba5f75[m Phase 8 Complete - UI/UX Polish & Documentation
+[33m44d20eb[m Add Project Templates - Phase 7 Complete
+[33m9aeac4f[m Add AI Code Review - Phase 6 Complete
+[33m628e4ea[m Add Iterative Development - Phase 5 Complete
+[33mfdf2270[m Add GitHub Auto-Sync - Phase 4 Complete
+[33ma90c819[m Add In-Browser Code Editor - Phase 3 Complete
+[33maa4b7ec[m Add Unified Chat Interface - Phase 2 Complete
+[33m188bb3c[m Add final development report - Production Ready
+[33m01ce3fa[m Add comprehensive documentation
+[33m8d97987[m Add comprehensive security and performance features
+[33m9879e3f[m Add comprehensive test suite with Vitest
+[33m56d1970[m Add enhanced workflow UI with real-time SSE updates
+[33ma2002b8[m Add comprehensive progress report
+[33m9a0e1ec[m Fix build errors and clean up imports
+[33mabca7d3[m Add Vercel API integration for auto-deployment
+[33mdd9a58c[m Add complete file management and project packaging system
+[33m570654b[m Add real-time workflow progress tracking system
+[33mc38e732[m Fix Agent 5 path handling and add test scripts
+[33m0b51c31[m Fix TypeScript build errors in agents and workflow orchestrator
+[33mb1542c2[m fix: Build errors in rate-limits page and agent3 TypeScript
+[33mda7a4d5[m feat: Complete workflow orchestration + UI (Generate page, Status page, API endpoints)
+[33m4732f76[m feat: Complete implementation - Vanchin AI integration + Agents 5-7 (Testing, Deployment, Monitoring)
+[33m6a75865[m docs: Add comprehensive documentation and quick start guide for Agents 3-4
+[33mdd174bd[m feat: Implement Agent 3 (Backend Generator) and Agent 4 (Frontend Generator) with AI-powered code generation
+[33m89837ee[m Add database fixes, MFA protection, rate limit management, and Agent 3 implementation
+[33m2839b7d[m Add missing admin pages: API Keys, System Logs, Rate Limits, and Analytics
+[33mb6fb72e[m docs: Add Admin setup guide for fixing 403 Forbidden error
+[33m22a39aa[m fix: Remove vercel.json to resolve schema validation error
+[33m4960805[m fix: Add missing import for createServerComponentClient in sessions route
+[33m279b082[m docs: Add Vercel project management guide (Thai)
+[33mfb962d0[m docs: Add deployment status and notes documentation
+[33ma06e0cd[m docs: Add comprehensive README, deployment guide, and Vercel configuration
+[33m9ecd487[m fix: Fix account-disabled redirect issue
+[33m7ada3d6[m docs: Add production readiness checklist
+[33mba312b7[m Fix: Database schema mismatch, update environment variables, improve health check
+[33mbc3848d[m Fix: แก้ไขชื่อตาราง user_profiles -> profiles และ api_credentials -> api_keys
+[33m80e40fb[m fix: Replace uuid_generate_v4() with gen_random_uuid() in all migrations
+[33m9f12f97[m Setup production environment with all API keys and configurations
+[33ma591482[m feat: Add Prompt Library, AI Agents, Tool Integrations, and new Landing Page
+[33m39f0199[m feat: Add RBAC, admin settings, rate limiting, and security improvements
+[33m9f6f7ce[m fix: เพิ่มฟังก์ชัน Logout ที่ทำงานได้จริง
+[33m901956a[m Fix: แก้ไข middleware redirect เป็น /app/dashboard
+[33m5049738[m Fix: เปลี่ยน redirect path จาก /app เป็น /app/dashboard
+[33ma6c1719[m Add comprehensive setup guides for Supabase and Vercel deployment
+[33m586c2ab[m fix: แก้ไขตามผลทดสอบ - ขยายโลโก้, ลบ 7 Agents, ขยายช่องแชท, ลบตัวอย่าง
+[33mdfcb5cd[m feat: Complete 100% - All features, DB, APIs, i18n, GitHub integration
+[33m328847a[m docs: เพิ่มเอกสารสรุปการปรับปรุงครั้งสุดท้าย
+[33m52cefdc[m feat: ปรับปรุงระบบให้พร้อมใช้งานจริง
+[33m36eabf7[m docs: Add implementation summary
+[33m86e07cb[m feat: Add all Priority features - Components, Features, UI/UX improvements
+[33mbc2361a[m Clean up: Remove redundant documentation files
+[33m6e697d4[m Add Phase-Based Execution Plan (no time-based)
+[33m07c3458[m Add FINAL_EXECUTION_PLAN: Strict Master Prompt for Agent
+[33m94f671f[m Add V3 Master Plan: Enterprise-Grade Complete System
+[33m0b33efa[m Add complete Master Plan V2 for Codex
+[33m1b01935[m Add Mr.Promth branding: logos and brand guidelines
+[33m3185978[m Merge pull request #3 from donlasahachat11-lgtm/cursor/generate-code-from-markdown-instructions-4a86
+[33md46197a[m[33m ([m[1;31morigin/cursor/generate-code-from-markdown-instructions-4a86[m[33m)[m feat: Implement agent chain for project generation
+[33m810fee4[m Add complete Agent Chain System documentation
+[33md59be82[m Add comprehensive project report
+[33m50ca627[m Add VanchinAI support with OpenAI SDK format
+[33m14b9705[m Add project analysis, VanchinAI keys, test script, and setup checklist
+[33md534994[m Merge pull request #2 from donlasahachat11-lgtm/cursor/enhance-ai-gateway-and-agent-logic-088a
+[33m52c3fe0[m[33m ([m[1;31morigin/cursor/enhance-ai-gateway-and-agent-logic-088a[m[33m)[m Refactor: Implement AI Gateway and provider support
+[33mb7eb1d2[m Merge pull request #1 from donlasahachat11-lgtm/cursor/build-autonomous-ai-agent-platform-6a50
+[33m17eff2d[m[33m ([m[1;31morigin/cursor/build-autonomous-ai-agent-platform-6a50[m[33m)[m Refactor: Implement shadcn/ui and update AI gateway
+[33ma204e61[m Initial commit: Mr.Prompt AI Agent Platform

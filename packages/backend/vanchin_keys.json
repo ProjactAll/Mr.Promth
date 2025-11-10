@@ -1,0 +1,91 @@
+{
+  "provider": "vanchin",
+  "base_url": "https://vanchin.streamlake.ai/api/gateway/v1/endpoints",
+  "agents": [
+    {
+      "id": 1,
+      "name": "Agent 1",
+      "api_key": "WW8GMBSTec_uPhRJQFe5y9OCsYrUKzslQx-LXWKLT9g",
+      "endpoint_id": "ep-lpvcnv-1761467347624133479"
+    },
+    {
+      "id": 2,
+      "name": "Agent 2",
+      "api_key": "3gZ9oCeG3sgxUTcfesqhfVnkAOO3JAEJTZWeQKwqzrk",
+      "endpoint_id": "ep-j9pysc-1761467653839114083"
+    },
+    {
+      "id": 3,
+      "name": "Agent 3",
+      "api_key": "npthpUsOWQ68u2VibXDmN3IWTM2IGDJeAxQQL1HVQ50",
+      "endpoint_id": "ep-2uyob4-1761467835762653881"
+    },
+    {
+      "id": 4,
+      "name": "Agent 4",
+      "api_key": "l1BsR_0ttZ9edaMf9NGBhFzuAfAS64KUmDGAkaz4VBU",
+      "endpoint_id": "ep-nqjal5-1762460264139958733"
+    },
+    {
+      "id": 5,
+      "name": "Agent 5",
+      "api_key": "Bt5nUT0GnP20fjZLDKsIvQKW5KOOoU4OsmQrK8SuUE8",
+      "endpoint_id": "ep-mhsvw6-1762460362477023705"
+    },
+    {
+      "id": 6,
+      "name": "Agent 6",
+      "api_key": "vsgJFTYUao7OVR7_hfvrbKX2AMykOAEwuwEPomro-zg",
+      "endpoint_id": "ep-h614n9-1762460436283699679"
+    },
+    {
+      "id": 7,
+      "name": "Agent 7",
+      "api_key": "pgBW4ALnqV-RtjlC4EICPbOcH_mY4jpQKAu3VXX6Y9k",
+      "endpoint_id": "ep-ohxawl-1762460514611065743"
+    },
+    {
+      "id": 8,
+      "name": "Agent 8",
+      "api_key": "cOkB4mwHHjs95szkuOLGyoSRtzTwP2u6-0YBdcQKszI",
+      "endpoint_id": "ep-bng3os-1762460592040033785"
+    },
+    {
+      "id": 9,
+      "name": "Agent 9",
+      "api_key": "6quSWJIN9tLotXUQNQypn_U2u6BwvvVLAOk7pgl7ybI",
+      "endpoint_id": "ep-kazx9x-1761818165668826967"
+    },
+    {
+      "id": 10,
+      "name": "Agent 10",
+      "api_key": "Co8IQ684LePQeq4t2bCB567d4zFa92N_7zaZLhJqkTo",
+      "endpoint_id": "ep-6bl8j9-1761818251624808527"
+    },
+    {
+      "id": 11,
+      "name": "Agent 11",
+      "api_key": "a9ciwI-1lgQW8128LG-QK_W0XWtYZ5Kt2aa2Zkjrq9w",
+      "endpoint_id": "ep-2d9ubo-1761818334800110875"
+    },
+    {
+      "id": 12,
+      "name": "Agent 12",
+      "api_key": "Ln-Z6aKGDxaMGXvN9hjMunpDNr975AncIpRtK7XrtTw",
+      "endpoint_id": "ep-dnxrl0-1761818420368606961"
+    },
+    {
+      "id": 13,
+      "name": "Agent 13",
+      "api_key": "CzQtP9g9qwM6wyxKJZ9spUloShOYH8hR-CHcymRks6w",
+      "endpoint_id": "ep-nmgm5b-1761818484923833700"
+    },
+    {
+      "id": 14,
+      "name": "Agent 14",
+      "api_key": "ylFdJan4VXsgm698_XaQZrc9KC_1EE7MRARV6sNapzI",
+      "endpoint_id": "ep-8rvmfy-1762460863026449765"
+    }
+  ],
+  "notes": "These keys are for VanchinAI/StreamLake API. Each agent has its own endpoint ID that acts as the model parameter."
+}

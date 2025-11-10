@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "Mr.Promth Extension",
+  "version": "1.0.4",
+  "description": "AI-powered screenshot to code - Capture any website and generate production-ready code.",
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_icon": "logo.png"
+  },
+  "permissions": [
+    "declarativeNetRequest",
+    "scripting",
+    "webRequest",
+    "webNavigation",
+    "tabCapture"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "js": [
+        "assets/content.ts-loader.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "assets/*",
+        "content.ts.js"
+      ],
+      "use_dynamic_url": false
+    }
+  ]
+}

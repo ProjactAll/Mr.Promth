@@ -1,0 +1,22 @@
+# Template for Next AI Agent Login
+
+**Objective**: To seamlessly continue the development of the Mr.Prompt project.
+
+**Instructions**: Copy and paste the following information into the prompt for the next AI agent.
+
+---
+
+Continue development on the Mr.Prompt project. The project is located in `/home/ubuntu/projects/mrphomth-project`. All necessary credentials and documentation are available in this directory.
+
+**Your first task is critical**: The project build is currently blocked pending a manual database migration. You must guide the user to run the SQL script located at `supabase/migrations/001_create_project_files.sql` in their Supabase dashboard.
+
+Review the `QUICK_START_NEXT_SESSION.md` and `NEW_HANDOVER_DOCUMENTATION.md` files for a complete status update and detailed instructions on how to proceed after the migration is complete.
+
+**Key Information to provide:**
+- **GitHub Repo**: https://github.com/donlasahachat6/mrpromth
+- **GitHub Token**: [REDACTED_GITHUB_TOKEN]
+- **Supabase URL**: https://xcwkwdoxrbzzpwmlqswr.supabase.co
+- **Supabase Keys**: Stored in `.env.local`
+- **Vercel Project**: https://vercel.com/mrpromths-projects/mrphomth
+
+Start by reading the `QUICK_START_NEXT_SESSION.md` file.

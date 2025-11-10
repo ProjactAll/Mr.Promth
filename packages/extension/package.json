@@ -1,0 +1,15 @@
+{
+  "name": "@mrpromth/extension",
+  "version": "1.0.0",
+  "description": "Mr.Promth Browser Extension - Screenshot to Code",
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "vite build --mode production",
+    "lint": "eslint src --ext .js,.ts"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.246",
+    "vite": "^4.5.0",
+    "vite-plugin-web-extension": "^3.2.0"
+  }
+}
