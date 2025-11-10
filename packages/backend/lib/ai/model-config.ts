@@ -182,7 +182,17 @@ export function getNextModelForAgent(
       return getRandomAgentModel(agent)
 
     case 'least-used':
-      // TODO: Implement least-used strategy with usage tracking
+      // Use load balancer for least-used strategy
+      const { getLoadBalancer } = require('./load-balancer');
+      const loadBalancer = getLoadBalancer();
+      const endpointInfo = loadBalancer.getAgentEndpoint(agent);
+      
+      if (endpointInfo) {
+        // Return model based on load balancer selection
+        return endpointInfo.endpoint;
+      }
+      
+      // Fallback to primary if load balancer fails
       return config.primary[0]
 
     default:

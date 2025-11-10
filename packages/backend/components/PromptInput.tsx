@@ -41,9 +41,34 @@ export function PromptInput({ onGenerate, isLoading = false }: PromptInputProps)
     setAttachedFiles(prev => [...prev, ...files]);
   };
 
-  const handleGitHubImport = () => {
-    // TODO: Implement GitHub import
-    alert('GitHub Import feature - Coming soon!');
+  const handleGitHubImport = async () => {
+    const url = prompt('Enter GitHub repository URL (e.g., https://github.com/user/repo):');
+    
+    if (!url) return;
+    
+    try {
+      const response = await fetch('/api/github/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to import repository');
+      }
+      
+      const data = await response.json();
+      
+      // Add imported files to attached files
+      if (data.files && data.files.length > 0) {
+        alert(`Successfully imported ${data.files.length} files from ${data.repository}`);
+        // You can process the files here if needed
+      }
+    } catch (error) {
+      console.error('GitHub import error:', error);
+      alert(error instanceof Error ? error.message : 'Failed to import repository');
+    }
   };
 
   const examplePrompts = [

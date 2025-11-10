@@ -87,10 +87,41 @@ class Logger {
         break;
     }
 
-    // TODO: ส่ง logs ไปยัง external service (Sentry, LogRocket, etc.)
-    // if (this.isProduction && level === 'error') {
-    //   this.sendToErrorTracking(entry);
-    // }
+    // Send critical errors to external error tracking service
+    if (this.isProduction && level === 'error') {
+      this.sendToErrorTracking(entry);
+    }
+  }
+
+  /**
+   * Send error to external tracking service (Sentry, LogRocket, etc.)
+   */
+  private sendToErrorTracking(entry: LogEntry): void {
+    try {
+      // Check if Sentry is available (browser or server)
+      if (typeof window !== 'undefined' && (window as any).Sentry) {
+        (window as any).Sentry.captureException(entry.error || new Error(entry.message), {
+          level: 'error',
+          extra: entry.context,
+          tags: {
+            timestamp: entry.timestamp
+          }
+        });
+      } else if (typeof global !== 'undefined' && (global as any).Sentry) {
+        (global as any).Sentry.captureException(entry.error || new Error(entry.message), {
+          level: 'error',
+          extra: entry.context,
+          tags: {
+            timestamp: entry.timestamp
+          }
+        });
+      }
+      
+      // Add other error tracking services here (LogRocket, Datadog, etc.)
+    } catch (trackingError) {
+      // Fail silently to avoid breaking the application
+      console.error('Failed to send error to tracking service:', trackingError);
+    }
   }
 
   /**

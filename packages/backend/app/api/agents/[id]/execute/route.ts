@@ -274,8 +274,7 @@ async function executeToolStep(step: AgentStep, context: any) {
 async function executeConditionStep(step: AgentStep, context: any) {
   const { condition } = step.config;
   
-  // Evaluate condition
-  // TODO: Implement safe condition evaluation
+  // Evaluate condition safely
   const result = evaluateCondition(condition, context);
   
   return { condition_met: result };

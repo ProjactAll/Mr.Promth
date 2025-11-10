@@ -145,14 +145,45 @@ async function extractImagesFromPDF(pdfPath: string): Promise<{ images: string[]
     
     // List extracted images
     const { stdout } = await execAsync(`ls "${outputDir}"`);
-    const images = stdout.trim().split("\n").filter(f => f);
+    const imageFiles = stdout.trim().split("\n").filter(f => f);
 
-    // TODO: Upload images to storage and return URLs
-    // For now, return image filenames
+    // Upload images to Supabase Storage
+    const { createServiceClient } = await import('@/lib/database');
+    const supabase = createServiceClient();
+    const uploadedImages: { filename: string; url: string }[] = [];
+    
+    for (const imageFile of imageFiles) {
+      try {
+        const imagePath = join(outputDir, imageFile);
+        const imageBuffer = await readFile(imagePath);
+        
+        // Upload to Supabase Storage
+        const storagePath = `pdf-images/${Date.now()}-${imageFile}`;
+        const { data, error } = await supabase.storage
+          .from('project-files')
+          .upload(storagePath, imageBuffer, {
+            contentType: 'image/png',
+            upsert: false
+          });
+        
+        if (!error && data) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('project-files')
+            .getPublicUrl(storagePath);
+          
+          uploadedImages.push({
+            filename: imageFile,
+            url: publicUrl
+          });
+        }
+      } catch (uploadError) {
+        logger.error(`Error uploading ${imageFile}:`, uploadError instanceof Error ? uploadError : new Error(String(uploadError)));
+      }
+    }
     
     return {
-      images,
-      count: images.length
+      images: uploadedImages,
+      count: uploadedImages.length
     };
   } catch (error) {
     logger.error('Error extracting images from PDF:', error instanceof Error ? error : new Error(String(error)));
@@ -194,13 +225,47 @@ async function convertPDFToImages(pdfPath: string): Promise<{ images: string[]; 
     
     // List generated images
     const { stdout } = await execAsync(`ls "${outputDir}"`);
-    const images = stdout.trim().split("\n").filter(f => f);
+    const imageFiles = stdout.trim().split("\n").filter(f => f);
 
-    // TODO: Upload images to storage and return URLs
+    // Upload images to Supabase Storage
+    const { createServiceClient } = await import('@/lib/database');
+    const supabase = createServiceClient();
+    const uploadedImages: { filename: string; url: string; page: number }[] = [];
+    
+    for (let i = 0; i < imageFiles.length; i++) {
+      const imageFile = imageFiles[i];
+      try {
+        const imagePath = join(outputDir, imageFile);
+        const imageBuffer = await readFile(imagePath);
+        
+        // Upload to Supabase Storage
+        const storagePath = `pdf-pages/${Date.now()}-${imageFile}`;
+        const { data, error } = await supabase.storage
+          .from('project-files')
+          .upload(storagePath, imageBuffer, {
+            contentType: 'image/png',
+            upsert: false
+          });
+        
+        if (!error && data) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('project-files')
+            .getPublicUrl(storagePath);
+          
+          uploadedImages.push({
+            filename: imageFile,
+            url: publicUrl,
+            page: i + 1
+          });
+        }
+      } catch (uploadError) {
+        logger.error(`Error uploading ${imageFile}:`, uploadError instanceof Error ? uploadError : new Error(String(uploadError)));
+      }
+    }
     
     return {
-      images,
-      count: images.length
+      images: uploadedImages,
+      count: uploadedImages.length
     };
   } catch (error) {
     logger.error('Error converting PDF to images:', error instanceof Error ? error : new Error(String(error)));

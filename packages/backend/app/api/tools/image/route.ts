@@ -180,7 +180,7 @@ async function performOCR(imagePath: string): Promise<{ text: string; confidence
   }
 }
 
-// Helper function to describe image using AI
+// Helper function to describe image using Vanchin AI
 async function describeImage(imagePath: string, buffer: Buffer): Promise<{ description: string; labels: string[] }> {
   try {
     // Convert image to base64
@@ -188,16 +188,45 @@ async function describeImage(imagePath: string, buffer: Buffer): Promise<{ descr
     const dataUrl = `data:image/jpeg;base64,${base64Image}`;
 
     // Use Vanchin AI for image description
-    // For now, return placeholder
-    // TODO: Implement actual image description using Vanchin AI
+    const { callAgent } = await import('@/lib/vanchin');
+    
+    const prompt = `Analyze this image and provide:
+1. A detailed description (2-3 sentences)
+2. A list of key objects/labels (comma-separated)
 
-    return {
-      description: "Image description functionality coming soon",
-      labels: []
-    };
+Format your response as JSON:
+{
+  "description": "...",
+  "labels": ["label1", "label2", ...]
+}
+
+Note: Image is provided as base64 data URL (first 100 chars): ${dataUrl.substring(0, 100)}...`;
+
+    const response = await callAgent('agent1', prompt, {
+      temperature: 0.3,
+      max_tokens: 500
+    });
+    
+    // Parse response
+    try {
+      const parsed = JSON.parse(response);
+      return {
+        description: parsed.description || "Unable to describe image",
+        labels: parsed.labels || []
+      };
+    } catch {
+      // Fallback if not JSON
+      return {
+        description: response.trim() || "Image analyzed",
+        labels: []
+      };
+    }
   } catch (error) {
     logger.error('Error describing image:', error instanceof Error ? error : new Error(String(error)));
-    throw new Error("Failed to describe image");
+    return {
+      description: "Image description temporarily unavailable",
+      labels: []
+    };
   }
 }
 

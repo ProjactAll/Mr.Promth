@@ -197,8 +197,45 @@ export function TerminalEmulator({
     if (data === '\r') { // Enter
       terminal.write('\r\n')
       
-      // TODO: Send command to backend for execution
-      // For now, just echo
+      // Send command to backend for execution
+      const command = currentCommand.trim();
+      
+      if (command && currentSessionId) {
+        try {
+          // Execute command via API
+          const response = await fetch('/api/terminal/execute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              session_id: currentSessionId,
+              command: command
+            })
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            
+            // Display output
+            if (result.output) {
+              terminal.write(result.output + '\r\n');
+            }
+            
+            // Display error if any
+            if (result.error) {
+              terminal.write('\x1b[1;31m' + result.error + '\x1b[0m\r\n');
+            }
+          } else {
+            terminal.write('\x1b[1;31mError: Failed to execute command\x1b[0m\r\n');
+          }
+        } catch (error) {
+          terminal.write('\x1b[1;31mError: ' + (error instanceof Error ? error.message : 'Unknown error') + '\x1b[0m\r\n');
+        }
+      }
+      
+      // Reset command buffer
+      setCurrentCommand('');
+      
+      // Show prompt
       terminal.write('\x1b[1;32m$\x1b[0m ')
       
       if (currentSessionId && isConnected) {
