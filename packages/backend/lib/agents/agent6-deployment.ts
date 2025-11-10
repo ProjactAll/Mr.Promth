@@ -4,30 +4,13 @@
  */
 
 import { createLogger } from '../utils/logger'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { exec, spawn } from 'child_process'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { promisify } from 'util'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { writeFile, readFile, readdir, stat } from 'fs/promises'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { join } from 'path'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { createVercelClient } from '../deployment/vercel-client'
 
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
-
+const logger = createLogger({ component: 'Agent6' })
 const execAsync = promisify(exec)
 
 export interface Agent6Request {

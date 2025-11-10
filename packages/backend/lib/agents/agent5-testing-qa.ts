@@ -4,30 +4,13 @@
  */
 
 import { createLogger } from '../utils/logger'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { vanchinChatCompletion } from '../ai/vanchin-client'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { writeFile, mkdir, readFile } from 'fs/promises'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { join } from 'path'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { exec } from 'child_process'
-
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
 import { promisify } from 'util'
 
-// Create logger instance
-const logger = createLogger('$(basename "$file" .ts)')
-
+const logger = createLogger({ component: 'Agent5' })
 const execAsync = promisify(exec)
 
 export interface Agent5Request {
@@ -153,7 +136,7 @@ async function generateTests(
       logger.info('[Agent 5] ✅ Generated test:', { data: testFilePath })
       
     } catch (error) {
-      logger.error('[Agent 5] Error generating test for', filePath, error instanceof Error ? filePath, error : new Error(String(filePath, error)))
+      logger.error('[Agent 5] Error generating test for', error instanceof Error ? error : new Error(String(error)))
     }
   }
   
