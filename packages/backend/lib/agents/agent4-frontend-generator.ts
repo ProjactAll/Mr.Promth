@@ -3,6 +3,7 @@
  * Generates React components, pages, and UI elements
  */
 
+import { createLogger } from '../utils/logger'
 import { generateCode, type CodeGenerationRequest } from '../code-generator/ai-generator'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
@@ -54,9 +55,9 @@ export async function agent4GenerateFrontend(
   }
   
   try {
-    console.log('[Agent 4] Starting frontend code generation...')
-    console.log('[Agent 4] Task:', request.task.type)
-    console.log('[Agent 4] Description:', request.task.description)
+    logger.info('[Agent 4] Starting frontend code generation...')
+    logger.info('[Agent 4] Task:', { data: request.task.type })
+    logger.info('[Agent 4] Description:', { data: request.task.description })
     
     // Generate code based on task type
     switch (request.task.type) {
@@ -84,13 +85,13 @@ export async function agent4GenerateFrontend(
     result.success = true
     result.nextSteps = generateNextSteps(request, result)
     
-    console.log('[Agent 4] ✅ Frontend generation complete!')
-    console.log('[Agent 4] Files generated:', result.filesGenerated.length)
+    logger.info('[Agent 4] ✅ Frontend generation complete!')
+    logger.info('[Agent 4] Files generated:', { data: result.filesGenerated.length })
     
     return result
     
   } catch (error) {
-    console.error('[Agent 4] ❌ Error:', error)
+    logger.error('[Agent 4] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -165,7 +166,7 @@ async function generatePage(
     result.dependencies.push(...generated.dependencies)
   }
   
-  console.log('[Agent 4] ✅ Generated page:', route)
+  logger.info('[Agent 4] ✅ Generated page:', { data: route })
 }
 
 /**
@@ -224,7 +225,7 @@ async function generateComponent(
     result.dependencies.push(...generated.dependencies)
   }
   
-  console.log('[Agent 4] ✅ Generated component:', componentName)
+  logger.info('[Agent 4] ✅ Generated component:', { data: componentName })
 }
 
 /**
@@ -284,7 +285,7 @@ async function generateForm(
     result.dependencies.push(...generated.dependencies)
   }
   
-  console.log('[Agent 4] ✅ Generated form:', componentName)
+  logger.info('[Agent 4] ✅ Generated form:', { data: componentName })
 }
 
 /**
@@ -348,7 +349,7 @@ async function generateDashboard(
     result.dependencies.push(...generated.dependencies)
   }
   
-  console.log('[Agent 4] ✅ Generated dashboard:', route)
+  logger.info('[Agent 4] ✅ Generated dashboard:', { data: route })
 }
 
 /**
@@ -398,7 +399,7 @@ async function generateLayout(
     result.dependencies.push(...generated.dependencies)
   }
   
-  console.log('[Agent 4] ✅ Generated layout:', route || 'root')
+  logger.info('[Agent 4] ✅ Generated layout:', { data: route || 'root' })
 }
 
 /**

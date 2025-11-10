@@ -1,3 +1,4 @@
+import { createLogger } from '@/lib/utils/logger'
 import {
   createServiceClient,
   getApiKeyByKey,
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
         })
         sessionId = sessionData.id
       } catch (error) {
-        console.error('Error creating session:', error)
+        logger.error('Error creating session:', error instanceof Error ? error : new Error(String(error)))
         return NextResponse.json(
           { error: 'Failed to create session' },
           { status: 500 }
@@ -125,7 +126,7 @@ export async function POST(request: Request) {
       })
 
     if (uploadError) {
-      console.error('Error uploading screenshot:', uploadError)
+      logger.error('Error uploading screenshot:', uploadError instanceof Error ? uploadError : new Error(String(uploadError)))
       return NextResponse.json(
         { error: 'Failed to upload screenshot' },
         { status: 500 }
@@ -154,7 +155,7 @@ export async function POST(request: Request) {
         }
       )
     } catch (error) {
-      console.error('Error saving screenshot metadata:', error)
+      logger.error('Error saving screenshot metadata:', error instanceof Error ? error : new Error(String(error)))
       return NextResponse.json(
         { error: 'Failed to save screenshot metadata' },
         { status: 500 }
@@ -173,7 +174,7 @@ export async function POST(request: Request) {
           metadata?.forms || []
         )
       } catch (error) {
-        console.error('Error saving DOM snapshot:', error)
+        logger.error('Error saving DOM snapshot:', error instanceof Error ? error : new Error(String(error)))
         // Don't fail the request, just log the error
       }
     }
@@ -186,7 +187,7 @@ export async function POST(request: Request) {
     })
 
   } catch (error) {
-    console.error('Screenshot capture error:', error)
+    logger.error('Screenshot capture error:', error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -252,7 +253,7 @@ export async function GET(request: Request) {
         screenshots = await getUserScreenshots(userId, limit)
       }
     } catch (error) {
-      console.error('Error fetching screenshots:', error)
+      logger.error('Error fetching screenshots:', error instanceof Error ? error : new Error(String(error)))
       return NextResponse.json(
         { error: 'Failed to fetch screenshots' },
         { status: 500 }
@@ -265,7 +266,7 @@ export async function GET(request: Request) {
     })
 
   } catch (error) {
-    console.error('Get screenshots error:', error)
+    logger.error('Get screenshots error:', error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

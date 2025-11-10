@@ -1,3 +1,4 @@
+import { createLogger } from '@/lib/utils/logger'
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error("Error processing image:", error);
+    logger.error('Error processing image:', error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: "Failed to process image", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
@@ -125,7 +126,7 @@ async function analyzeImage(imagePath: string, buffer: Buffer): Promise<any> {
       // TODO: Add width, height, color space, etc. using sharp
     };
   } catch (error) {
-    console.error("Error analyzing image:", error);
+    logger.error('Error analyzing image:', error instanceof Error ? error : new Error(String(error)));
     throw new Error("Failed to analyze image");
   }
 }
@@ -139,7 +140,7 @@ async function performOCR(imagePath: string): Promise<{ text: string }> {
       text: "OCR functionality coming soon"
     };
   } catch (error) {
-    console.error("Error performing OCR:", error);
+    logger.error('Error performing OCR:', error instanceof Error ? error : new Error(String(error)));
     throw new Error("Failed to perform OCR");
   }
 }
@@ -160,7 +161,7 @@ async function describeImage(imagePath: string, buffer: Buffer): Promise<{ descr
       labels: []
     };
   } catch (error) {
-    console.error("Error describing image:", error);
+    logger.error('Error describing image:', error instanceof Error ? error : new Error(String(error)));
     throw new Error("Failed to describe image");
   }
 }
@@ -176,7 +177,7 @@ async function resizeImage(imagePath: string, width: number, height: number): Pr
       message: "Image resize functionality coming soon"
     };
   } catch (error) {
-    console.error("Error resizing image:", error);
+    logger.error('Error resizing image:', error instanceof Error ? error : new Error(String(error)));
     throw new Error("Failed to resize image");
   }
 }
@@ -191,7 +192,7 @@ async function convertImage(imagePath: string, format: string): Promise<any> {
       message: "Image conversion functionality coming soon"
     };
   } catch (error) {
-    console.error("Error converting image:", error);
+    logger.error('Error converting image:', error instanceof Error ? error : new Error(String(error)));
     throw new Error("Failed to convert image");
   }
 }

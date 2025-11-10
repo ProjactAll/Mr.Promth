@@ -3,6 +3,7 @@
  * Tracks errors, performance, user analytics, and system health
  */
 
+import { createLogger } from '../utils/logger'
 import { createClient } from '@supabase/supabase-js'
 
 export interface Agent7Request {
@@ -62,8 +63,8 @@ export async function agent7Monitor(
   }
   
   try {
-    console.log('[Agent 7] Starting monitoring task...')
-    console.log('[Agent 7] Task:', request.task.type)
+    logger.info('[Agent 7] Starting monitoring task...')
+    logger.info('[Agent 7] Task:', { data: request.task.type })
     
     switch (request.task.type) {
       case 'log-error':
@@ -88,12 +89,12 @@ export async function agent7Monitor(
     }
     
     result.success = true
-    console.log('[Agent 7] ✅ Monitoring task complete!')
+    logger.info('[Agent 7] ✅ Monitoring task complete!')
     
     return result
     
   } catch (error) {
-    console.error('[Agent 7] ❌ Error:', error)
+    logger.error('[Agent 7] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -362,8 +363,8 @@ export async function setupMonitoringAlerts(
     notifyWebhook?: string
   }
 ): Promise<void> {
-  console.log('[Agent 7] Setting up monitoring alerts...')
-  console.log('[Agent 7] Error threshold:', config.errorThreshold)
+  logger.info('[Agent 7] Setting up monitoring alerts...')
+  logger.info('[Agent 7] Error threshold:', { data: config.errorThreshold })
   
   // This would integrate with services like:
   // - Sentry for error tracking
@@ -385,7 +386,7 @@ export async function setupMonitoringAlerts(
     created_at: new Date().toISOString()
   })
   
-  console.log('[Agent 7] ✅ Monitoring alerts configured')
+  logger.info('[Agent 7] ✅ Monitoring alerts configured')
 }
 
 /**

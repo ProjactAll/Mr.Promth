@@ -3,6 +3,7 @@
  * Handles deployment to Vercel, environment setup, and domain configuration
  */
 
+import { createLogger } from '../utils/logger'
 import { exec, spawn } from 'child_process'
 import { promisify } from 'util'
 import { writeFile, readFile, readdir, stat } from 'fs/promises'
@@ -46,9 +47,9 @@ export async function agent6Deploy(
   }
   
   try {
-    console.log('[Agent 6] Starting deployment...')
-    console.log('[Agent 6] Task:', request.task.type)
-    console.log('[Agent 6] Platform:', request.task.platform || 'vercel')
+    logger.info('[Agent 6] Starting deployment...')
+    logger.info('[Agent 6] Task:', { data: request.task.type })
+    logger.info('[Agent 6] Platform:', { data: request.task.platform || 'vercel' })
     
     switch (request.task.type) {
       case 'deploy':
@@ -73,12 +74,12 @@ export async function agent6Deploy(
     }
     
     result.success = true
-    console.log('[Agent 6] ✅ Deployment complete!')
+    logger.info('[Agent 6] ✅ Deployment complete!')
     
     return result
     
   } catch (error) {
-    console.error('[Agent 6] ❌ Error:', error)
+    logger.error('[Agent 6] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -147,7 +148,7 @@ async function deployToVercel(
     result.recommendations.push('Configure custom domain if needed')
     
   } catch (error: any) {
-    console.error('[Agent 6] Deployment error:', error)
+    logger.error('[Agent 6] Deployment error:', error instanceof Error ? error : new Error(String(error)))
     result.logs?.push('Deployment failed')
     result.logs?.push(error.message)
     
@@ -246,7 +247,7 @@ async function setupEnvironment(
     result.recommendations.push('Redeploy to apply changes: vercel --prod')
     
   } catch (error: any) {
-    console.error('[Agent 6] Environment setup error:', error)
+    logger.error('[Agent 6] Environment setup error:', error instanceof Error ? error : new Error(String(error)))
     result.logs?.push('Environment setup failed')
     result.recommendations.push('Manually create .env.local file')
   }
@@ -283,7 +284,7 @@ async function configureDomain(
     result.recommendations.push(`SSL certificate will be provisioned automatically`)
     
   } catch (error: any) {
-    console.error('[Agent 6] Domain configuration error:', error)
+    logger.error('[Agent 6] Domain configuration error:', error instanceof Error ? error : new Error(String(error)))
     result.logs?.push('Domain configuration failed')
     result.recommendations.push('Manually add domain in Vercel dashboard')
     result.recommendations.push('Ensure domain is not already in use')
@@ -328,7 +329,7 @@ async function rollbackDeployment(
     result.recommendations.push('Verify the deployment is working correctly')
     
   } catch (error: any) {
-    console.error('[Agent 6] Rollback error:', error)
+    logger.error('[Agent 6] Rollback error:', error instanceof Error ? error : new Error(String(error)))
     result.logs?.push('Rollback failed')
     result.recommendations.push('Manually rollback in Vercel dashboard')
   }
@@ -341,7 +342,7 @@ async function fullDeployment(
   request: Agent6Request,
   result: Agent6Result
 ): Promise<void> {
-  console.log('[Agent 6] Running full deployment workflow...')
+  logger.info('[Agent 6] Running full deployment workflow...')
   
   // Step 1: Setup environment
   if (request.task.envVars && Object.keys(request.task.envVars).length > 0) {
@@ -442,7 +443,7 @@ jobs:
     'utf-8'
   )
   
-  console.log('[Agent 6] ✅ GitHub Actions workflow created')
+  logger.info('[Agent 6] ✅ GitHub Actions workflow created')
 }
 
 /**

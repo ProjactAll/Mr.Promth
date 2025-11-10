@@ -1,3 +1,4 @@
+import { createLogger } from '@/lib/utils/logger'
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error("Error processing PDF:", error);
+    logger.error('Error processing PDF:', error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: "Failed to process PDF", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
@@ -126,7 +127,7 @@ async function extractTextFromPDF(pdfPath: string): Promise<{ text: string; page
       pages
     };
   } catch (error) {
-    console.error("Error extracting text from PDF:", error);
+    logger.error('Error extracting text from PDF:', error instanceof Error ? error : new Error(String(error)));
     throw new Error("Failed to extract text from PDF");
   }
 }
@@ -152,7 +153,7 @@ async function extractImagesFromPDF(pdfPath: string): Promise<{ images: string[]
       count: images.length
     };
   } catch (error) {
-    console.error("Error extracting images from PDF:", error);
+    logger.error('Error extracting images from PDF:', error instanceof Error ? error : new Error(String(error)));
     throw new Error("Failed to extract images from PDF");
   }
 }
@@ -175,7 +176,7 @@ async function getPDFMetadata(pdfPath: string): Promise<any> {
 
     return metadata;
   } catch (error) {
-    console.error("Error getting PDF metadata:", error);
+    logger.error('Error getting PDF metadata:', error instanceof Error ? error : new Error(String(error)));
     throw new Error("Failed to get PDF metadata");
   }
 }
@@ -200,7 +201,7 @@ async function convertPDFToImages(pdfPath: string): Promise<{ images: string[]; 
       count: images.length
     };
   } catch (error) {
-    console.error("Error converting PDF to images:", error);
+    logger.error('Error converting PDF to images:', error instanceof Error ? error : new Error(String(error)));
     throw new Error("Failed to convert PDF to images");
   }
 }

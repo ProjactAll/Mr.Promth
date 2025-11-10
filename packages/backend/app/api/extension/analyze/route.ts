@@ -1,3 +1,4 @@
+import { createLogger } from '@/lib/utils/logger'
 import {
   getApiKeyByKey,
   getScreenshot,
@@ -93,7 +94,7 @@ export async function POST(request: Request) {
     try {
       domSnapshot = await getDomSnapshot(screenshot_id)
     } catch (error) {
-      console.log('No DOM snapshot found for screenshot:', screenshot_id)
+      logger.info('No DOM snapshot found for screenshot:', { data: screenshot_id })
     }
 
     // Build analysis prompt
@@ -171,7 +172,7 @@ Please provide:
       }
 
     } catch (error) {
-      console.error('AI analysis error:', error)
+      logger.error('AI analysis error:', error instanceof Error ? error : new Error(String(error)))
       return NextResponse.json(
         { error: 'AI analysis failed', details: (error as Error).message },
         { status: 500 }
@@ -192,7 +193,7 @@ Please provide:
         processingTime
       )
     } catch (error) {
-      console.error('Error saving analysis results:', error)
+      logger.error('Error saving analysis results:', error instanceof Error ? error : new Error(String(error)))
       return NextResponse.json(
         { error: 'Failed to save analysis results' },
         { status: 500 }
@@ -209,7 +210,7 @@ Please provide:
     })
 
   } catch (error) {
-    console.error('Analysis endpoint error:', error)
+    logger.error('Analysis endpoint error:', error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -292,7 +293,7 @@ export async function GET(request: Request) {
     try {
       analyses = await getAnalysisResults(screenshotId)
     } catch (error) {
-      console.error('Error fetching analyses:', error)
+      logger.error('Error fetching analyses:', error instanceof Error ? error : new Error(String(error)))
       return NextResponse.json(
         { error: 'Failed to fetch analyses' },
         { status: 500 }
@@ -304,7 +305,7 @@ export async function GET(request: Request) {
     })
 
   } catch (error) {
-    console.error('Get analyses error:', error)
+    logger.error('Get analyses error:', error instanceof Error ? error : new Error(String(error)))
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

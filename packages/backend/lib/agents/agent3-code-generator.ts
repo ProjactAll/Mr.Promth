@@ -3,6 +3,7 @@
  * Generates backend code (API routes, database migrations, functions)
  */
 
+import { createLogger } from '../utils/logger'
 import { generateCode, generateRelatedFiles, type CodeGenerationRequest } from '../code-generator/ai-generator'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
@@ -52,9 +53,9 @@ export async function agent3GenerateBackend(
   }
   
   try {
-    console.log('[Agent 3] Starting backend code generation...')
-    console.log('[Agent 3] Task:', request.task.type)
-    console.log('[Agent 3] Description:', request.task.description)
+    logger.info('[Agent 3] Starting backend code generation...')
+    logger.info('[Agent 3] Task:', { data: request.task.type })
+    logger.info('[Agent 3] Description:', { data: request.task.description })
     
     // Generate code based on task type
     switch (request.task.type) {
@@ -78,13 +79,13 @@ export async function agent3GenerateBackend(
     result.success = true
     result.nextSteps = generateNextSteps(request, result)
     
-    console.log('[Agent 3] ✅ Code generation complete!')
-    console.log('[Agent 3] Files generated:', result.filesGenerated.length)
+    logger.info('[Agent 3] ✅ Code generation complete!')
+    logger.info('[Agent 3] Files generated:', { data: result.filesGenerated.length })
     
     return result
     
   } catch (error) {
-    console.error('[Agent 3] ❌ Error:', error)
+    logger.error('[Agent 3] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -147,7 +148,7 @@ async function generateAPIRoutes(
       result.dependencies.push(...generated.dependencies)
     }
     
-    console.log('[Agent 3] ✅ Generated API route:', endpoint)
+    logger.info('[Agent 3] ✅ Generated API route:', { data: endpoint })
   }
 }
 
@@ -198,7 +199,7 @@ async function generateMigrations(
     content: generated.code
   })
   
-  console.log('[Agent 3] ✅ Generated migration:', generated.filename)
+  logger.info('[Agent 3] ✅ Generated migration:', { data: generated.filename })
 }
 
 /**
@@ -245,7 +246,7 @@ async function generateFunctions(
     }
   }
   
-  console.log('[Agent 3] ✅ Generated functions:', files.length)
+  logger.info('[Agent 3] ✅ Generated functions:', { data: files.length })
 }
 
 /**
@@ -290,7 +291,7 @@ async function generateIntegrations(
     result.dependencies.push(...generated.dependencies)
   }
   
-  console.log('[Agent 3] ✅ Generated integration:', generated.filename)
+  logger.info('[Agent 3] ✅ Generated integration:', { data: generated.filename })
 }
 
 /**

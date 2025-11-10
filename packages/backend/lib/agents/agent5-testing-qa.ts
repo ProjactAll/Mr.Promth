@@ -3,6 +3,7 @@
  * Generates tests, runs them, and reports coverage
  */
 
+import { createLogger } from '../utils/logger'
 import { vanchinChatCompletion } from '../ai/vanchin-client'
 import { writeFile, mkdir, readFile } from 'fs/promises'
 import { join } from 'path'
@@ -60,8 +61,8 @@ export async function agent5TestingQA(
   }
   
   try {
-    console.log('[Agent 5] Starting testing & QA...')
-    console.log('[Agent 5] Task:', request.task.type)
+    logger.info('[Agent 5] Starting testing & QA...')
+    logger.info('[Agent 5] Task:', { data: request.task.type })
     
     switch (request.task.type) {
       case 'generate-tests':
@@ -86,12 +87,12 @@ export async function agent5TestingQA(
     }
     
     result.success = true
-    console.log('[Agent 5] ✅ Testing & QA complete!')
+    logger.info('[Agent 5] ✅ Testing & QA complete!')
     
     return result
     
   } catch (error) {
-    console.error('[Agent 5] ❌ Error:', error)
+    logger.error('[Agent 5] ❌ Error:', error instanceof Error ? error : new Error(String(error)))
     result.errors = result.errors || []
     result.errors.push(error instanceof Error ? error.message : String(error))
     return result
@@ -131,10 +132,10 @@ async function generateTests(
         content: testCode
       })
       
-      console.log('[Agent 5] ✅ Generated test:', testFilePath)
+      logger.info('[Agent 5] ✅ Generated test:', { data: testFilePath })
       
     } catch (error) {
-      console.error('[Agent 5] Error generating test for', filePath, error)
+      logger.error('[Agent 5] Error generating test for', filePath, error instanceof Error ? filePath, error : new Error(String(filePath, error)))
     }
   }
   
@@ -266,7 +267,7 @@ async function runTests(
           failures: []
         }
       } catch (parseError) {
-        console.error('[Agent 5] Error parsing test output:', parseError)
+        logger.error('[Agent 5] Error parsing test output:', parseError instanceof Error ? parseError : new Error(String(parseError)))
       }
     }
     
@@ -316,7 +317,7 @@ async function checkCoverage(
     }
     
   } catch (error) {
-    console.error('[Agent 5] Error checking coverage:', error)
+    logger.error('[Agent 5] Error checking coverage:', error instanceof Error ? error : new Error(String(error)))
     result.recommendations.push('Could not check coverage')
     result.recommendations.push('Ensure jest is configured with coverage enabled')
   }
@@ -354,7 +355,7 @@ async function runE2ETests(
     }
     
   } catch (error) {
-    console.error('[Agent 5] Error running E2E tests:', error)
+    logger.error('[Agent 5] Error running E2E tests:', error instanceof Error ? error : new Error(String(error)))
     result.recommendations.push('Could not run E2E tests')
     result.recommendations.push('Install Playwright: pnpm add -D @playwright/test')
   }
@@ -367,7 +368,7 @@ async function fullQA(
   request: Agent5Request,
   result: Agent5Result
 ): Promise<void> {
-  console.log('[Agent 5] Running full QA...')
+  logger.info('[Agent 5] Running full QA...')
   
   // Step 1: Generate tests
   if (request.task.targetFiles && request.task.targetFiles.length > 0) {

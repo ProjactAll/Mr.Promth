@@ -1,3 +1,4 @@
+import { createLogger } from '@/lib/utils/logger'
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -65,7 +66,7 @@ export async function POST(
       .single();
 
     if (executionError) {
-      console.error("Error creating execution:", executionError);
+      logger.error('Error creating execution:', executionError instanceof Error ? executionError : new Error(String(executionError)));
       return NextResponse.json(
         { error: "Failed to create execution" },
         { status: 500 }
@@ -156,7 +157,7 @@ export async function POST(
       });
 
     } catch (error) {
-      console.error("Error executing agent:", error);
+      logger.error('Error executing agent:', error instanceof Error ? error : new Error(String(error)));
       
       // Update execution with error
       await supabase
@@ -180,7 +181,7 @@ export async function POST(
     }
 
   } catch (error) {
-    console.error("Unexpected error:", error);
+    logger.error('Unexpected error:', error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -291,7 +292,7 @@ function evaluateCondition(condition: string, context: any): boolean {
     const func = new Function('context', `with(context) { return ${condition}; }`);
     return func(context);
   } catch (error) {
-    console.error("Error evaluating condition:", error);
+    logger.error('Error evaluating condition:', error instanceof Error ? error : new Error(String(error)));
     return false;
   }
 }
@@ -309,7 +310,7 @@ async function executeWebSearch(params: any): Promise<{ results: any[] }> {
     );
     
     if (!response.ok) {
-      console.error('Web search failed:', response.statusText);
+      logger.error('Web search failed:', response.statusText instanceof Error ? response.statusText : new Error(String(response.statusText)));
       return { results: [] };
     }
 
@@ -326,7 +327,7 @@ async function executeWebSearch(params: any): Promise<{ results: any[] }> {
 
     return { results };
   } catch (error) {
-    console.error('Error in web search:', error);
+    logger.error('Error in web search:', error instanceof Error ? error : new Error(String(error)));
     return { results: [] };
   }
 }
